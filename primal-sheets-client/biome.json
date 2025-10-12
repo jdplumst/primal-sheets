@@ -5,7 +5,7 @@
     "ignoreUnknown": false,
     "includes": ["**", "!**/dist", "!src/routeTree.gen.ts"]
   },
-  "formatter": { "enabled": true, "indentStyle": "tab" },
+  "formatter": { "enabled": true, "indentStyle": "space" },
   "linter": {
     "enabled": true,
     "rules": { "recommended": false },
