@@ -6,7 +6,7 @@ export default defineConfig({
   schema: "./src/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.PROD_DATABASE_URL!,
+    url: process.env.PROD_DATABASE_URL as string,
   },
   tablesFilter: ["primal-sheets_*"],
 });
