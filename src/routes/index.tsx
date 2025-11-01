@@ -1,17 +1,53 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/")({
 	component: Home,
 	ssr: true,
+	validateSearch: (search: Record<string, unknown>) => {
+		return {
+			error: (search.error as string) || undefined,
+			error_description: (search.error_description as string) || undefined,
+		};
+	},
 });
 
 function Home() {
+	const { error, error_description } = Route.useSearch();
+
+	useEffect(() => {
+		if (error) {
+			const message =
+				error_description || error || "Failed to sign in with Discord";
+			toast.error("Sign in failed", {
+				description: message,
+			});
+			// Clean up the URL by removing the error query params
+			const url = new URL(window.location.href);
+			url.searchParams.delete("error");
+			url.searchParams.delete("error_description");
+			window.history.replaceState({}, "", url.toString());
+		}
+	}, [error, error_description]);
+
 	const handleDiscordSignIn = async () => {
-		await authClient.signIn.social({
-			provider: "discord",
-		});
+		try {
+			await authClient.signIn.social({
+				provider: "discord",
+				callbackURL: "/campaigns",
+			});
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "Failed to sign in with Discord. Please try again.";
+			toast.error("Sign in failed", {
+				description: errorMessage,
+			});
+		}
 	};
 
 	return (
