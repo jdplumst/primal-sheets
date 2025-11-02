@@ -2,7 +2,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { campaign } from "@/features/campaigns/db/campaigns-schema";
 
-export const fetchCampaigns = async (userId: string) => {
+export const fetchCampaignsRepository = async (userId: string) => {
 	const campaigns = await db
 		.select()
 		.from(campaign)
