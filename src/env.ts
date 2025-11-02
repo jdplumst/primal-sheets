@@ -44,7 +44,7 @@ export const env = createEnv({
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 		DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
 		DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
-		VITE_BETTER_AUTH_URL: import.meta.env.VITE_BETTER_AUTH_URL,
+		VITE_BETTER_AUTH_URL: import.meta.env.VITE_BETTER_AUTH_URL.optional(),
 	},
 
 	/**
