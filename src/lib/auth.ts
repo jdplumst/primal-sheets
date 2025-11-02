@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { env } from "@/env";
 
 export const auth = betterAuth({
+	baseURL: env.BETTER_AUTH_URL,
 	socialProviders: {
 		discord: {
 			clientId: env.DISCORD_CLIENT_ID,
