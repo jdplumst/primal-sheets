@@ -26,11 +26,21 @@ export function ThemeProvider({
 	storageKey = "vite-ui-theme",
 	...props
 }: ThemeProviderProps) {
-	const [theme, setTheme] = useState<Theme>(
-		() => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
-	);
+	const [theme, setTheme] = useState<Theme>(defaultTheme);
+	const [mounted, setMounted] = useState(false);
+
+	// Only access localStorage after component mounts (client-side)
+	useEffect(() => {
+		setMounted(true);
+		const stored = localStorage.getItem(storageKey) as Theme;
+		if (stored) {
+			setTheme(stored);
+		}
+	}, [storageKey]);
 
 	useEffect(() => {
+		if (!mounted) return;
+
 		const root = window.document.documentElement;
 
 		root.classList.remove("light", "dark");
@@ -46,15 +56,26 @@ export function ThemeProvider({
 		}
 
 		root.classList.add(theme);
-	}, [theme]);
+	}, [theme, mounted]);
 
 	const value = {
 		theme,
-		setTheme: (theme: Theme) => {
-			localStorage.setItem(storageKey, theme);
-			setTheme(theme);
+		setTheme: (newTheme: Theme) => {
+			if (typeof window !== "undefined") {
+				localStorage.setItem(storageKey, newTheme);
+			}
+			setTheme(newTheme);
 		},
 	};
+
+	// Prevent hydration mismatch by not rendering theme-dependent classes during SSR
+	if (!mounted) {
+		return (
+			<ThemeProviderContext.Provider {...props} value={value}>
+				{children}
+			</ThemeProviderContext.Provider>
+		);
+	}
 
 	return (
 		<ThemeProviderContext.Provider {...props} value={value}>
