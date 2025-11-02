@@ -27,7 +27,7 @@ export const env = createEnv({
 	clientPrefix: "VITE_",
 
 	client: {
-		VITE_APP_TITLE: z.string().min(1).optional(),
+		VITE_BETTER_AUTH_URL: z.string().url(),
 	},
 
 	/**
@@ -44,7 +44,7 @@ export const env = createEnv({
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 		DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
 		DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
-		VITE_APP_TITLE: import.meta.env.VITE_APP_TITLE,
+		VITE_BETTER_AUTH_URL: import.meta.env.VITE_BETTER_AUTH_URL,
 	},
 
 	/**
