@@ -1,11 +1,14 @@
 import { desc, eq, or } from "drizzle-orm";
-import { db } from "@/db";
+import type { Database } from "@/db";
 import {
 	campaign,
 	campaignMember,
 } from "@/features/campaigns/db/campaigns-schema";
 
-export const fetchCampaignsRepository = async (userId: string) => {
+export const fetchCampaignsRepository = async (
+	db: Database,
+	userId: string,
+) => {
 	const campaigns = await db
 		.selectDistinct()
 		.from(campaign)

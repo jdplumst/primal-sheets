@@ -14,7 +14,8 @@
     "check": "biome check",
     "check:fix": "biome check --fix",
     "db:push-dev": "drizzle-kit push --config=drizzle-dev.config.ts",
-    "db:push-prod": "drizzle-kit push --config=drizzle-prod.config.ts"
+    "db:push-prod": "drizzle-kit push --config=drizzle-prod.config.ts",
+    "test:integration": "NODE_ENV=test vitest run tests/integration-tests"
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
+    "@testcontainers/postgresql": "^11.8.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/node": "^22.10.2",
