@@ -38,7 +38,7 @@ export const env = createEnv({
 	// runtimeEnv: process.env,
 	runtimeEnvStrict: {
 		SERVER_URL: process.env.SERVER_URL ?? import.meta.env.SERVER_URL,
-		NODE_ENV: process.env.NODE_ENV ?? import.meta.env.NODE_ENV,
+		NODE_ENV: process.env.NODE_ENV ?? (import.meta?.env?.NODE_ENV || undefined),
 		DATABASE_URL: process.env.DATABASE_URL,
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
@@ -61,4 +61,6 @@ export const env = createEnv({
 	 * explicitly specify this option as true.
 	 */
 	emptyStringAsUndefined: true,
+
+	skipValidation: process.env.NODE_ENV === "test",
 });
