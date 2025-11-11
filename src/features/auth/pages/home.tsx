@@ -1,10 +1,15 @@
-import { useSearch } from "@tanstack/react-router";
+import { redirect, useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 export const Home = () => {
+	const session = authClient.useSession();
+	if (session.data?.user.id) {
+		redirect({ to: "/campaigns" });
+	}
+
 	const { error, error_description } = useSearch({ from: "/" });
 
 	useEffect(() => {
