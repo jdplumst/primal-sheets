@@ -4,7 +4,7 @@ import {
 	createTestDb,
 	type TestDb,
 } from "tests/integration-tests/test-db-setup";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
 	campaign,
 	campaignMember,
@@ -45,7 +45,16 @@ describe("fetchCampaignsRepository", () => {
 	let testUserId: string;
 	let otherUserId: string;
 	let memberRoleId: string;
-	let ownerRoleId: string;
+
+	// Test campaigns
+	let userCampaign1: typeof campaign.$inferSelect;
+	let userCampaign2: typeof campaign.$inferSelect;
+	let membershipCampaign: typeof campaign.$inferSelect;
+	let dualRoleCampaign: typeof campaign.$inferSelect;
+	let otherUserCampaign: typeof campaign.$inferSelect;
+	let notMemberCampaign: typeof campaign.$inferSelect;
+	let olderCampaign: typeof campaign.$inferSelect;
+	let newerCampaign: typeof campaign.$inferSelect;
 
 	// Track inserted data for cleanup
 	const insertedData: {
@@ -75,7 +84,7 @@ describe("fetchCampaignsRepository", () => {
 			.insert(campaignMemberRole)
 			.values(TEST_ROLES.owner)
 			.returning();
-		ownerRoleId = ownerRole.id;
+
 		insertedData.campaignMemberRoles.push(ownerRole.id);
 
 		// Insert users
@@ -92,10 +101,129 @@ describe("fetchCampaignsRepository", () => {
 			.returning();
 		otherUserId = otherUser.id;
 		insertedData.users.push(otherUser.id);
+
+		// Campaigns where testUser is creator
+		[userCampaign1] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "User Campaign 1",
+				createdBy: testUserId,
+			})
+			.returning();
+		insertedData.campaigns.push(userCampaign1.id);
+
+		[userCampaign2] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "User Campaign 2",
+				createdBy: testUserId,
+			})
+			.returning();
+		insertedData.campaigns.push(userCampaign2.id);
+
+		// Campaign where testUser is member (but not creator)
+		[membershipCampaign] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "Membership Campaign",
+				createdBy: otherUserId,
+			})
+			.returning();
+		insertedData.campaigns.push(membershipCampaign.id);
+
+		const [member1] = await testDb.db
+			.insert(campaignMember)
+			.values({
+				id: faker.string.uuid(),
+				campaignId: membershipCampaign.id,
+				userId: testUserId,
+				roleId: memberRoleId,
+			})
+			.returning();
+		insertedData.campaignMembers.push(member1.id);
+
+		// Campaign where testUser is both creator AND member
+		[dualRoleCampaign] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "Dual Role Campaign",
+				createdBy: testUserId,
+			})
+			.returning();
+		insertedData.campaigns.push(dualRoleCampaign.id);
+
+		const [member2] = await testDb.db
+			.insert(campaignMember)
+			.values({
+				id: faker.string.uuid(),
+				campaignId: dualRoleCampaign.id,
+				userId: testUserId,
+				roleId: memberRoleId,
+			})
+			.returning();
+		insertedData.campaignMembers.push(member2.id);
+
+		// Campaigns where testUser has no access (created by otherUser, testUser not a member)
+		[otherUserCampaign] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "Other User Campaign",
+				createdBy: otherUserId,
+			})
+			.returning();
+		insertedData.campaigns.push(otherUserCampaign.id);
+
+		[notMemberCampaign] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "Not Member Campaign",
+				createdBy: otherUserId,
+			})
+			.returning();
+		insertedData.campaigns.push(notMemberCampaign.id);
+
+		// Campaigns with different timestamps for ordering test
+		[olderCampaign] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "Older Campaign",
+				createdBy: testUserId,
+				createdAt: new Date("2024-01-01"),
+			})
+			.returning();
+		insertedData.campaigns.push(olderCampaign.id);
+
+		[newerCampaign] = await testDb.db
+			.insert(campaign)
+			.values({
+				id: faker.string.uuid(),
+				name: "Newer Campaign",
+				createdBy: testUserId,
+				createdAt: new Date("2024-01-02"),
+			})
+			.returning();
+		insertedData.campaigns.push(newerCampaign.id);
 	});
 
 	afterAll(async () => {
-		await cleanupTestData();
+		if (insertedData.campaignMembers.length > 0) {
+			await testDb.db
+				.delete(campaignMember)
+				.where(inArray(campaignMember.id, insertedData.campaignMembers));
+		}
+
+		if (insertedData.campaigns.length > 0) {
+			await testDb.db
+				.delete(campaign)
+				.where(inArray(campaign.id, insertedData.campaigns));
+		}
 
 		if (insertedData.users.length > 0) {
 			await testDb.db.delete(user).where(inArray(user.id, insertedData.users));
@@ -113,245 +241,80 @@ describe("fetchCampaignsRepository", () => {
 		await testDb.container.stop();
 	});
 
-	beforeEach(async () => {
-		await cleanupTestData();
-	});
-
-	/**
-	 * Helper function to clean up test data between tests
-	 * Note: Users and roles persist across tests
-	 */
-	async function cleanupTestData() {
-		if (insertedData.campaignMembers.length > 0) {
-			await testDb.db
-				.delete(campaignMember)
-				.where(inArray(campaignMember.id, insertedData.campaignMembers));
-		}
-
-		if (insertedData.campaigns.length > 0) {
-			await testDb.db
-				.delete(campaign)
-				.where(inArray(campaign.id, insertedData.campaigns));
-		}
-
-		// Reset tracking for campaign-related data only
-		insertedData.campaignMembers = [];
-		insertedData.campaigns = [];
-	}
-
 	it("should fetch campaigns where user is the creator", async () => {
-		// Create campaigns where test user is creator
-		const [campaign1] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "My Campaign 1",
-				createdBy: testUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(campaign1.id);
-
-		const [campaign2] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "My Campaign 2",
-				createdBy: testUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(campaign2.id);
-
-		// Create a campaign by another user (should not be included)
-		const [otherCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Other User's Campaign",
-				createdBy: otherUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(otherCampaign.id);
-
 		const result = await fetchCampaignsRepository(testDb.db, testUserId);
 
-		expect(result).toHaveLength(2);
-		expect(result.map((c) => c.campaign.id)).toContain(campaign1.id);
-		expect(result.map((c) => c.campaign.id)).toContain(campaign2.id);
-		expect(result.map((c) => c.campaign.id).includes(otherCampaign.id)).toBe(
-			false,
-		);
+		const resultIds = result.map((c) => c.campaign.id);
+		expect(resultIds).toContain(userCampaign1.id);
+		expect(resultIds).toContain(userCampaign2.id);
+		expect(resultIds).not.toContain(otherUserCampaign.id);
 	});
 
 	it("should fetch campaigns where user is a member", async () => {
-		// Create campaign by another user
-		const [otherCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Campaign I'm Member Of",
-				createdBy: otherUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(otherCampaign.id);
-
-		// Add test user as member
-		const [member] = await testDb.db
-			.insert(campaignMember)
-			.values({
-				id: faker.string.uuid(),
-				campaignId: otherCampaign.id,
-				userId: testUserId,
-				roleId: memberRoleId,
-			})
-			.returning();
-		insertedData.campaignMembers.push(member.id);
-
-		// Create another campaign by other user where test user is NOT a member
-		const [notMemberCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Campaign I'm Not In",
-				createdBy: otherUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(notMemberCampaign.id);
-
 		const result = await fetchCampaignsRepository(testDb.db, testUserId);
 
-		expect(result).toHaveLength(1);
-		expect(result[0]?.campaign.id).toBe(otherCampaign.id);
-		expect(result[0]?.campaign.name).toBe("Campaign I'm Member Of");
+		const resultIds = result.map((c) => c.campaign.id);
+		expect(resultIds).toContain(membershipCampaign.id);
+		expect(resultIds).not.toContain(notMemberCampaign.id);
+
+		const memberCampaign = result.find(
+			(c) => c.campaign.id === membershipCampaign.id,
+		);
+		expect(memberCampaign?.campaign.name).toBe("Membership Campaign");
 	});
 
 	it("should fetch campaigns where user is both creator and member (no duplicates)", async () => {
-		// Create campaign where test user is creator
-		const [myCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "My Campaign",
-				createdBy: testUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(myCampaign.id);
-
-		// Also add test user as member (edge case)
-		const [member] = await testDb.db
-			.insert(campaignMember)
-			.values({
-				id: faker.string.uuid(),
-				campaignId: myCampaign.id,
-				userId: testUserId,
-				roleId: memberRoleId,
-			})
-			.returning();
-		insertedData.campaignMembers.push(member.id);
-
 		const result = await fetchCampaignsRepository(testDb.db, testUserId);
 
-		// Should only appear once due to selectDistinct (if you add it)
-		expect(result.length).toBeGreaterThanOrEqual(1);
-		expect(result.some((c) => c.campaign.id === myCampaign.id)).toBe(true);
+		// Filter to only the dual role campaign
+		const filteredResults = result.filter(
+			(c) => c.campaign.id === dualRoleCampaign.id,
+		);
+
+		// Should only appear once due to distinct campaign IDs
+		expect(filteredResults).toHaveLength(1);
+		expect(filteredResults[0]?.campaign.name).toBe("Dual Role Campaign");
 	});
 
 	it("should fetch campaigns where user is creator OR member", async () => {
-		// Campaign where user is creator
-		const [createdCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Campaign I Created",
-				createdBy: testUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(createdCampaign.id);
-
-		// Campaign where user is member
-		const [memberCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Campaign I'm Member Of",
-				createdBy: otherUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(memberCampaign.id);
-
-		const [member] = await testDb.db
-			.insert(campaignMember)
-			.values({
-				id: faker.string.uuid(),
-				campaignId: memberCampaign.id,
-				userId: testUserId,
-				roleId: memberRoleId,
-			})
-			.returning();
-		insertedData.campaignMembers.push(member.id);
-
-		// Campaign where user is neither creator nor member
-		const [notInCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Campaign I'm Not In",
-				createdBy: otherUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(notInCampaign.id);
-
 		const result = await fetchCampaignsRepository(testDb.db, testUserId);
 
-		expect(result).toHaveLength(2);
-		expect(result.map((c) => c.campaign.id)).toContain(createdCampaign.id);
-		expect(result.map((c) => c.campaign.id)).toContain(memberCampaign.id);
-		expect(result.map((c) => c.campaign.id)).not.toContain(notInCampaign.id);
+		const resultIds = result.map((c) => c.campaign.id);
+
+		// Should include campaigns where user is creator
+		expect(resultIds).toContain(userCampaign1.id);
+		expect(resultIds).toContain(userCampaign2.id);
+
+		// Should include campaign where user is member
+		expect(resultIds).toContain(membershipCampaign.id);
+
+		// Should NOT include campaigns where user has no access
+		expect(resultIds).not.toContain(otherUserCampaign.id);
+		expect(resultIds).not.toContain(notMemberCampaign.id);
 	});
 
 	it("should return campaigns ordered by createdAt descending", async () => {
-		// Create campaigns with different timestamps
-		const [olderCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Older Campaign",
-				createdBy: testUserId,
-				createdAt: new Date("2024-01-01"),
-			})
-			.returning();
-		insertedData.campaigns.push(olderCampaign.id);
-
-		const [newerCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Newer Campaign",
-				createdBy: testUserId,
-				createdAt: new Date("2024-01-02"),
-			})
-			.returning();
-		insertedData.campaigns.push(newerCampaign.id);
-
 		const result = await fetchCampaignsRepository(testDb.db, testUserId);
 
-		expect(result).toHaveLength(2);
-		expect(result[0]?.campaign.id).toBe(newerCampaign.id);
-		expect(result[1]?.campaign.id).toBe(olderCampaign.id);
+		// Find the positions of our test campaigns
+		const newerIndex = result.findIndex(
+			(c) => c.campaign.id === newerCampaign.id,
+		);
+		const olderIndex = result.findIndex(
+			(c) => c.campaign.id === olderCampaign.id,
+		);
+
+		// Newer campaign should come before older campaign
+		expect(newerIndex).toBeGreaterThanOrEqual(0);
+		expect(olderIndex).toBeGreaterThanOrEqual(0);
+		expect(newerIndex).toBeLessThan(olderIndex);
 	});
 
 	it("should return empty array when user has no campaigns", async () => {
-		// Create campaign by another user
-		const [otherCampaign] = await testDb.db
-			.insert(campaign)
-			.values({
-				id: faker.string.uuid(),
-				name: "Other User's Campaign",
-				createdBy: otherUserId,
-			})
-			.returning();
-		insertedData.campaigns.push(otherCampaign.id);
+		// Use a new user ID that has no campaigns
+		const noAccessUserId = faker.string.uuid();
 
-		const result = await fetchCampaignsRepository(testDb.db, testUserId);
+		const result = await fetchCampaignsRepository(testDb.db, noAccessUserId);
 
 		expect(result).toHaveLength(0);
 	});
