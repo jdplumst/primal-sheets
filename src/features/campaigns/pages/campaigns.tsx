@@ -8,15 +8,26 @@ import {
 	EmptyTitle,
 } from "@/components/ui/empty";
 import { fetchCampaigns } from "@/features/campaigns/handlers/fetch-campaigns";
-import { useAuth } from "@/hooks/useAuth";
+import { authClient } from "@/lib/auth-client";
 
 export const Campaigns = () => {
-	const { userId } = useAuth();
+	const { data: session } = authClient.useSession();
+	const userId = session?.user?.id;
 
 	const { data: campaigns } = useSuspenseQuery({
 		queryKey: ["campaigns", userId],
 		queryFn: () => fetchCampaigns(),
 	});
+
+	const handleSignOut = async () => {
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					window.location.href = "/";
+				},
+			},
+		});
+	};
 
 	if (campaigns.length === 0) {
 		return (
@@ -29,6 +40,7 @@ export const Campaigns = () => {
 				</EmptyHeader>
 				<EmptyContent>
 					<Button>Add Campaign</Button>
+					<Button onClick={handleSignOut}>Sign Out</Button>
 				</EmptyContent>
 			</Empty>
 		);

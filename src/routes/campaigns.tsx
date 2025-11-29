@@ -1,15 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { Campaigns } from "@/features/campaigns/pages/campaigns";
-import { AuthenticatedLayout } from "@/layouts/authenticated-layout";
 import { LoadingLayout } from "@/layouts/loading-layout";
+import { authClient } from "@/lib/auth-client";
 
 const CampaignsRoute = () => {
 	return (
 		<Suspense fallback={<LoadingLayout />}>
-			<AuthenticatedLayout>
-				<Campaigns />
-			</AuthenticatedLayout>
+			<Campaigns />
 		</Suspense>
 	);
 };
@@ -17,4 +15,17 @@ const CampaignsRoute = () => {
 export const Route = createFileRoute("/campaigns")({
 	component: CampaignsRoute,
 	ssr: false,
+	beforeLoad: async () => {
+		const session = await authClient.getSession();
+
+		if (!session.data?.user.id) {
+			throw redirect({
+				to: "/",
+				search: {
+					error: "Unauthorized",
+					error_description: "You must be logged in to view content",
+				},
+			});
+		}
+	},
 });

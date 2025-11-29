@@ -10,6 +10,7 @@ export const Home = () => {
 		const message =
 			error_description || error || "Failed to sign in with Discord";
 		toast.error("Sign in failed", {
+			id: "auth-error",
 			description: message,
 		});
 	}
