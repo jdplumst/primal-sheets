@@ -1,6 +1,6 @@
 import type { Database } from "@/db";
 import { campaign } from "@/db/schema";
-import { generateId } from "@/lib/utils";
+import { generateId } from "@/lib/id";
 
 export const createCampaignRepository = async (
 	db: Database,

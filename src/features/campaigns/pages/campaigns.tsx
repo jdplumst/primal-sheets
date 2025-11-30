@@ -8,13 +8,13 @@ import {
 	EmptyTitle,
 } from "@/components/ui/empty";
 import { fetchCampaigns } from "@/features/campaigns/handlers/fetch-campaigns";
-import { useSuspenseSession } from "@/hooks/useSuspenseSession";
 import { authClient } from "@/lib/auth-client";
 
-export const Campaigns = () => {
-	const { data: session } = useSuspenseSession();
-	const userId = session.data?.user?.id;
+interface CampaignsProps {
+	userId: string;
+}
 
+export const Campaigns = ({ userId }: CampaignsProps) => {
 	const { data: campaigns } = useSuspenseQuery({
 		queryKey: ["campaigns", userId],
 		queryFn: () => fetchCampaigns(),

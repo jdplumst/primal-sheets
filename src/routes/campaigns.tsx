@@ -5,9 +5,11 @@ import { LoadingLayout } from "@/layouts/loading-layout";
 import { authClient } from "@/lib/auth-client";
 
 const CampaignsRoute = () => {
+	const { userId } = Route.useRouteContext();
+
 	return (
 		<Suspense fallback={<LoadingLayout />}>
-			<Campaigns />
+			<Campaigns userId={userId} />
 		</Suspense>
 	);
 };
@@ -27,5 +29,9 @@ export const Route = createFileRoute("/campaigns")({
 				},
 			});
 		}
+
+		return {
+			userId: session.data.user.id,
+		};
 	},
 });
