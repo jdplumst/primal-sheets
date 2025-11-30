@@ -1,7 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { getSession } from "@/lib/get-session";
 
-// In your _authed.tsx layout route
 export const Route = createFileRoute("/_authed")({
 	beforeLoad: async () => {
 		const session = await getSession();

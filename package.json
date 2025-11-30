@@ -16,7 +16,8 @@
     "db:push-dev": "drizzle-kit push --config=drizzle-dev.config.ts",
     "db:push-prod": "drizzle-kit push --config=drizzle-prod.config.ts",
     "test:unit": "NODE_ENV=test vitest run tests/unit-tests",
-    "test:integration": "NODE_ENV=test vitest run tests/integration-tests"
+    "test:integration": "NODE_ENV=test vitest run tests/integration-tests",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",
