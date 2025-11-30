@@ -11,7 +11,7 @@ import {
 	campaignMemberRole,
 	user,
 } from "@/db/schema";
-import { fetchCampaignsRepository } from "../../src/features/campaigns/repositories/fetch-campaigns";
+import { fetchCampaignsRepository } from "../../../src/features/campaigns/repositories/fetch-campaigns";
 
 describe("fetchCampaignsRepository", () => {
 	let testDb: TestDb;
