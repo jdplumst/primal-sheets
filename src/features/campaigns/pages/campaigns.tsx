@@ -1,4 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import {
 	Empty,
@@ -15,9 +16,11 @@ interface CampaignsProps {
 }
 
 export const Campaigns = ({ userId }: CampaignsProps) => {
+	const getCampaigns = useServerFn(fetchCampaigns);
+
 	const { data: campaigns } = useSuspenseQuery({
 		queryKey: ["campaigns", userId],
-		queryFn: () => fetchCampaigns(),
+		queryFn: () => getCampaigns(),
 	});
 
 	const handleSignOut = async () => {
