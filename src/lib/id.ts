@@ -1,3 +1,3 @@
-export function generateId(): string {
-	return crypto.randomUUID();
-}
+import { createServerOnlyFn } from "@tanstack/react-start";
+
+export const generateId = createServerOnlyFn(() => crypto.randomUUID());
