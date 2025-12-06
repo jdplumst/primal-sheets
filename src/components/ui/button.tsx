@@ -52,14 +52,39 @@ function Button({
 	}) {
 	const Comp = asChild ? Slot : "button";
 
+	if (asChild) {
+		return (
+			<Comp
+				data-slot="button"
+				className={cn(buttonVariants({ variant, size, className }))}
+				disabled={disabled || isBusy}
+				{...props}
+			>
+				{isBusy ? <Spinner className="text-current" /> : children}
+			</Comp>
+		);
+	}
+
 	return (
 		<Comp
 			data-slot="button"
-			className={cn(buttonVariants({ variant, size, className }))}
+			className={cn(buttonVariants({ variant, size, className }), "relative")}
 			disabled={disabled || isBusy}
 			{...props}
 		>
-			{isBusy ? <Spinner className="text-current" /> : children}
+			{isBusy && (
+				<span className="absolute inset-0 flex items-center justify-center">
+					<Spinner className="text-current" />
+				</span>
+			)}
+			<span
+				className={cn(
+					"flex items-center justify-center gap-2",
+					isBusy && "invisible",
+				)}
+			>
+				{children}
+			</span>
 		</Comp>
 	);
 }
