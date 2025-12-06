@@ -42,10 +42,6 @@ export const Campaigns = ({ userId }: CampaignsProps) => {
 		});
 	};
 
-	const handleCampaignCreated = () => {
-		setIsDialogOpen(false);
-	};
-
 	if (campaigns.length === 0) {
 		return (
 			<Empty className="h-screen w-screen flex justify-center items-center">
