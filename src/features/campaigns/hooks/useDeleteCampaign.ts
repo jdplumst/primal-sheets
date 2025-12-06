@@ -1,32 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { createCampaign } from "@/features/campaigns/handlers/create-campaign";
+import { deleteCampaign } from "@/features/campaigns/handlers/delete-campaign";
 
-interface UseCreateCampaignOptions {
+interface UseDeleteCampaignOptions {
 	userId: string;
-	closeDialog: () => void;
 }
 
-export const useCreateCampaign = ({
-	userId,
-	closeDialog,
-}: UseCreateCampaignOptions) => {
+export const useDeleteCampaign = ({ userId }: UseDeleteCampaignOptions) => {
 	const queryClient = useQueryClient();
-	const createCampaignFn = useServerFn(createCampaign);
+	const deleteCampaignFn = useServerFn(deleteCampaign);
 
 	return useMutation({
-		mutationFn: (data: { name: string }) => createCampaignFn({ data }),
+		mutationFn: (data: { id: string }) => deleteCampaignFn({ data }),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["campaigns", userId] });
-			closeDialog();
 		},
 		onError: (error) => {
 			const errorMessage =
 				error instanceof Error
 					? error.message
-					: "Failed to create campaign. Please try again.";
-			toast.error("Failed to create campaign", {
+					: "Failed to delete campaign. Please try again.";
+			toast.error("Failed to delete campaign", {
 				description: errorMessage,
 			});
 		},

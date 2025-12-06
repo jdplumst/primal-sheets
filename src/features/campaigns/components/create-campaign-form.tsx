@@ -19,12 +19,12 @@ type FormData = z.infer<typeof createCampaignSchema>;
 
 interface CreateCampaignFormProps {
 	userId: string;
-	onSuccess: () => void;
+	closeDialog: () => void;
 }
 
 export const CreateCampaignForm = ({
 	userId,
-	onSuccess,
+	closeDialog,
 }: CreateCampaignFormProps) => {
 	const nameInputId = useId();
 	const {
@@ -40,7 +40,7 @@ export const CreateCampaignForm = ({
 
 	const { mutate: createCampaign, isPending } = useCreateCampaign({
 		userId,
-		onSuccess,
+		closeDialog,
 	});
 
 	const onSubmit = (data: FormData) => {
