@@ -8,5 +8,5 @@ export default defineConfig({
 	dbCredentials: {
 		url: process.env.PROD_DATABASE_URL as string,
 	},
-	tablesFilter: ["primal-sheets_*"],
+	tablesFilter: ["ps_*"],
 });

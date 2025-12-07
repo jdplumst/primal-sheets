@@ -10,3 +10,8 @@ export const createCampaignSchema = z.object({
 export const deleteCampaignSchema = z.object({
 	id: z.string(),
 });
+
+export const createCampaignInvitationSchema = z.object({
+	campaignId: z.string(),
+	invitedUserId: z.string(),
+});
