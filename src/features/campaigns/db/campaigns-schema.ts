@@ -55,15 +55,12 @@ export const campaignInvitation = pgTable("campaign_invitation", {
 	invitedUserId: text("invited_user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	invitedBy: text("invited_by")
+	invitedByUserId: text("invited_by_user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
 	statusId: text("status_id")
 		.notNull()
 		.references(() => invitationStatus.id, { onDelete: "restrict" }),
-	roleId: text("role_id")
-		.notNull()
-		.references(() => campaignMemberRole.id, { onDelete: "restrict" }),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -123,16 +120,12 @@ export const campaignInvitationRelations = relations(
 			references: [user.id],
 		}),
 		inviter: one(user, {
-			fields: [campaignInvitation.invitedBy],
+			fields: [campaignInvitation.invitedByUserId],
 			references: [user.id],
 		}),
 		status: one(invitationStatus, {
 			fields: [campaignInvitation.statusId],
 			references: [invitationStatus.id],
-		}),
-		role: one(campaignMemberRole, {
-			fields: [campaignInvitation.roleId],
-			references: [campaignMemberRole.id],
 		}),
 	}),
 );
