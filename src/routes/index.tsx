@@ -1,6 +1,14 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { z } from "zod";
 import { Home } from "@/features/auth/pages/home";
 import { getSession } from "@/lib/get-session";
+
+const searchSchema = z
+	.object({
+		error: z.string().optional(),
+		error_description: z.string().optional(),
+	})
+	.optional();
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async () => {
@@ -16,10 +24,5 @@ export const Route = createFileRoute("/")({
 	},
 	component: Home,
 	ssr: true,
-	validateSearch: (search: Record<string, unknown>) => {
-		return {
-			error: (search.error as string) || undefined,
-			error_description: (search.error_description as string) || undefined,
-		};
-	},
+	validateSearch: searchSchema.parse,
 });

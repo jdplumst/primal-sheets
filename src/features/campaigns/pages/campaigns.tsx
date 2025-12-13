@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ interface CampaignsProps {
 export const Campaigns = ({ userId }: CampaignsProps) => {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [campaignToDelete, setCampaignToDelete] = useState<string | null>(null);
+	const navigate = useNavigate();
 	const { data: campaigns } = useFetchCampaigns(userId);
 	const deleteCampaign = useDeleteCampaign({ userId });
 
@@ -36,7 +38,7 @@ export const Campaigns = ({ userId }: CampaignsProps) => {
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {
-					window.location.href = "/";
+					navigate({ to: "/" });
 				},
 			},
 		});
