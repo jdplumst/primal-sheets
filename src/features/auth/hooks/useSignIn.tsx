@@ -1,11 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 export const useSignIn = () => {
-	const router = useRouter();
-
 	return useMutation({
 		mutationFn: async () => {
 			const result = await authClient.signIn.social({
@@ -18,9 +15,6 @@ export const useSignIn = () => {
 			}
 
 			return { ...result };
-		},
-		onSuccess: () => {
-			router.navigate({ to: "/campaigns" });
 		},
 		onError: (error) => {
 			const errorMessage =
