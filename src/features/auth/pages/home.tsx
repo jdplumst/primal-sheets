@@ -1,10 +1,11 @@
 import { useSearch } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { useSignIn } from "@/features/auth/hooks/useSignIn";
 
 export const Home = () => {
 	const { error, error_description } = useSearch({ from: "/" });
+	const signIn = useSignIn();
 
 	if (error) {
 		const message =
@@ -14,23 +15,6 @@ export const Home = () => {
 			description: message,
 		});
 	}
-
-	const handleDiscordSignIn = async () => {
-		try {
-			await authClient.signIn.social({
-				provider: "discord",
-				callbackURL: "/campaigns",
-			});
-		} catch (error) {
-			const errorMessage =
-				error instanceof Error
-					? error.message
-					: "Failed to sign in with Discord. Please try again.";
-			toast.error("Sign in failed", {
-				description: errorMessage,
-			});
-		}
-	};
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
@@ -57,7 +41,7 @@ export const Home = () => {
 
 				<div className="space-y-4">
 					<Button
-						onClick={handleDiscordSignIn}
+						onClick={() => signIn.mutate()}
 						size="lg"
 						className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
 					>
