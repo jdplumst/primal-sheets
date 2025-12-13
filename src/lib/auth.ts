@@ -6,6 +6,10 @@ import { env } from "@/env";
 
 export const auth = betterAuth({
 	...(env.BETTER_AUTH_URL && { baseURL: env.BETTER_AUTH_URL }),
+	trustedOrigins: [
+		"http://localhost:3000",
+		...(env.BETTER_AUTH_URL ? [env.BETTER_AUTH_URL] : []),
+	],
 	socialProviders: {
 		discord: {
 			clientId: env.DISCORD_CLIENT_ID,
