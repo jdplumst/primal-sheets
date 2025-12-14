@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { createCampaign } from "@/features/campaigns/handlers/create-campaign";
+import { createCampaign } from "@/features/campaigns/handlers/campaign-handler";
 
 interface UseCreateCampaignOptions {
 	userId: string;
