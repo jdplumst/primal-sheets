@@ -45,7 +45,7 @@ code {
 	--sidebar-accent-foreground: #2a2a4a;
 	--sidebar-border: #e0e0f0;
 	--sidebar-ring: #6e56cf;
-	--font-sans: Inter, sans-serif;
+	--font-sans: "Press Start 2P", system-ui;
 	--font-serif: Georgia, serif;
 	--font-mono: JetBrains Mono, monospace;
 	--radius: 0.5rem;
