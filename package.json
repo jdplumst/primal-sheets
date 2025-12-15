@@ -15,6 +15,8 @@
     "check:fix": "biome check --fix",
     "db:push-dev": "drizzle-kit push --config=drizzle-dev.config.ts",
     "db:push-prod": "drizzle-kit push --config=drizzle-prod.config.ts",
+    "db:studio-dev": "drizzle-kit studio --config=drizzle-dev.config.ts",
+    "db:studio-prod": "drizzle-kit studio --config=drizzle-prod.config.ts",
     "test:unit": "NODE_ENV=test vitest run tests/unit-tests",
     "test:integration": "NODE_ENV=test vitest run tests/integration-tests",
     "typecheck": "tsc --noEmit"
