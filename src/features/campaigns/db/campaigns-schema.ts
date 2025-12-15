@@ -80,7 +80,6 @@ export const campaignMemberRoleRelations = relations(
 	campaignMemberRole,
 	({ many }) => ({
 		members: many(campaignMember),
-		invitations: many(campaignInvitation),
 	}),
 );
 
