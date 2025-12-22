@@ -1,8 +1,6 @@
 name: CI/CD
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
@@ -48,27 +46,3 @@ jobs:
           cache: "pnpm"
       - run: pnpm install
       - run: pnpm run test
-
-  deploy:
-    # Only deploy on push to main and if all checks pass
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [typecheck, check, test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "pnpm"
-      - run: pnpm install
-      - run: pnpm run build
-      - name: Install Netlify CLI
-        run: pnpm add -g netlify-cli
-      - name: Deploy to Netlify
-        run: netlify deploy --prod --dir=dist/client --functions=.netlify/v1/functions
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
