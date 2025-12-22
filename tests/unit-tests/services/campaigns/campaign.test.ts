@@ -22,15 +22,15 @@ describe("campaign service", () => {
 						id: "campaign-1",
 						name: "campaign-1-name",
 						createdBy: "user-1",
-						createdAt: new Date(),
-						updatedAt: new Date(),
+						createdAt: new Date("2025-12-01"),
+						updatedAt: new Date("2025-12-01"),
 					},
 					campaign_member: {
 						id: "member-1",
 						campaignId: "campaign-1",
 						userId: "user-1",
 						roleId: "role-1",
-						joinedAt: new Date(),
+						joinedAt: new Date("2025-12-01"),
 					},
 				},
 				{
@@ -38,8 +38,8 @@ describe("campaign service", () => {
 						id: "campaign-2",
 						name: "campaign-2-name",
 						createdBy: "user-2",
-						createdAt: new Date(),
-						updatedAt: new Date(),
+						createdAt: new Date("2025-12-01"),
+						updatedAt: new Date("2025-12-01"),
 					},
 					campaign_member: {
 						id: "member-1",
@@ -61,8 +61,8 @@ describe("campaign service", () => {
 			vi.mocked(campaignRepository.createCampaignRepository).mockResolvedValue({
 				id: "campaign-1",
 				name: "campaign-name",
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				createdAt: new Date("2025-12-01"),
+				updatedAt: new Date("2025-12-01"),
 				createdBy: "user-1",
 			});
 
@@ -70,8 +70,8 @@ describe("campaign service", () => {
 			expect(result).toStrictEqual({
 				id: "campaign-1",
 				name: "campaign-name",
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				createdAt: new Date("2025-12-01"),
+				updatedAt: new Date("2025-12-01"),
 				createdBy: "user-1",
 			});
 		});
