@@ -14,6 +14,13 @@ import {
 	EmptyHeader,
 	EmptyTitle,
 } from "@/components/ui/empty";
+import {
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemTitle,
+} from "@/components/ui/item";
 import { CreateCampaignDialog } from "@/features/campaigns/components/create-campaign-dialog";
 import { DeleteCampaignDialog } from "@/features/campaigns/components/delete-campaign-dialog";
 import { useFetchCampaigns } from "@/features/campaigns/hooks/useFetchCampaigns";
@@ -54,18 +61,30 @@ export const CampaignsList = ({ userId }: CampaignsListProps) => {
 							</CardAction>
 						</CardHeader>
 						<CardContent>
-							{campaigns.map((c) => (
-								<div key={c.campaign.id}>
-									{c.campaign.name}
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() => setCampaignToDelete(c.campaign.id)}
-									>
-										<Trash2Icon />
-									</Button>
-								</div>
-							))}
+							<div className="flex flex-col gap-2">
+								{campaigns.map((c) => (
+									<div key={c.campaign.id}>
+										<Item variant="outline">
+											<ItemContent>
+												<ItemTitle>{c.campaign.name}</ItemTitle>
+												<ItemDescription>
+													Last Updated:{" "}
+													{c.campaign.updatedAt.toLocaleDateString()}
+												</ItemDescription>
+											</ItemContent>
+											<ItemActions>
+												<Button
+													variant="ghost"
+													size="icon"
+													onClick={() => setCampaignToDelete(c.campaign.id)}
+												>
+													<Trash2Icon />
+												</Button>
+											</ItemActions>
+										</Item>
+									</div>
+								))}
+							</div>
 						</CardContent>
 					</>
 				)}
