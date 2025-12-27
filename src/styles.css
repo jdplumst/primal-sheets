@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 
 @import "tw-animate-css";
@@ -45,7 +44,7 @@ code {
 	--sidebar-accent-foreground: #2a2a4a;
 	--sidebar-border: #e0e0f0;
 	--sidebar-ring: #6e56cf;
-	--font-sans: "Press Start 2P", system-ui;
+	--font-sans: JetBrains Sans, system-ui;
 	--font-serif: Georgia, serif;
 	--font-mono: JetBrains Mono, monospace;
 	--radius: 0.5rem;
@@ -110,7 +109,7 @@ code {
 	--sidebar-accent-foreground: #e2e2f5;
 	--sidebar-border: #303052;
 	--sidebar-ring: #a48fff;
-	--font-sans: "Press Start 2P", system-ui;
+	--font-sans: JetBrains Sans, system-ui;
 	--font-serif: Georgia, serif;
 	--font-mono: JetBrains Mono, monospace;
 	--radius: 0.5rem;
