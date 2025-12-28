@@ -25,6 +25,7 @@ export const fetchCampaignByIdRepository = createServerOnlyFn(
 			await db
 				.select()
 				.from(campaign)
+				.leftJoin(campaignMember, eq(campaignMember.campaignId, campaign.id))
 				.where(
 					and(
 						eq(campaign.id, campaignId),

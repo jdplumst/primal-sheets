@@ -1,5 +1,9 @@
 import z from "zod";
 
+export const fetchCampaignByIdSchema = z.object({
+	campaignId: z.string(),
+});
+
 export const createCampaignSchema = z.object({
 	name: z
 		.string()

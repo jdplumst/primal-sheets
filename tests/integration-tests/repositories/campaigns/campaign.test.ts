@@ -14,6 +14,7 @@ import {
 import {
 	createCampaignRepository,
 	deleteCampaignRepository,
+	fetchCampaignByIdRepository,
 	fetchCampaignsRepository,
 } from "../../../../src/features/campaigns/repositories/campaign-repository";
 
@@ -182,6 +183,56 @@ describe("campaign repository", () => {
 			const result = await fetchCampaignsRepository(testDb.db, noAccessUserId);
 
 			expect(result).toHaveLength(0);
+		});
+	});
+
+	describe("fetch campaign by id", () => {
+		const TEST_USERS = {
+			testUser: {
+				id: faker.string.uuid(),
+				name: faker.person.fullName(),
+				email: faker.internet.email(),
+			},
+		};
+
+		const TEST_CAMPAIGNS = {
+			testCampaign: {
+				campaign: {
+					id: faker.string.uuid(),
+					name: "Test Campaign",
+					createdBy: TEST_USERS.testUser.id,
+					createdAt: new Date("2025-12-01"),
+					updatedAt: new Date("2025-12-01"),
+				},
+				campaign_member: null,
+			},
+		};
+
+		beforeAll(async () => {
+			await testDb.db.insert(user).values(TEST_USERS.testUser);
+			await testDb.db
+				.insert(campaign)
+				.values(TEST_CAMPAIGNS.testCampaign.campaign);
+		});
+
+		afterAll(async () => {
+			const campaignIds = Object.values(TEST_CAMPAIGNS).map(
+				(c) => c.campaign.id,
+			);
+			await testDb.db.delete(campaign).where(inArray(campaign.id, campaignIds));
+
+			const userIds = Object.values(TEST_USERS).map((u) => u.id);
+			await testDb.db.delete(user).where(inArray(user.id, userIds));
+		});
+
+		it("fetch campaign by id", async () => {
+			const result = await fetchCampaignByIdRepository(
+				testDb.db,
+				TEST_USERS.testUser.id,
+				TEST_CAMPAIGNS.testCampaign.campaign.id,
+			);
+
+			expect(result).toStrictEqual(TEST_CAMPAIGNS.testCampaign);
 		});
 	});
 

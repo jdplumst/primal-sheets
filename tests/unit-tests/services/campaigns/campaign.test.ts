@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
 	createCampaignService,
 	deleteCampaignService,
+	fetchCampaignByIdService,
 	fetchCampaignsService,
 } from "@/features/campaigns/services/campaign-service";
 import * as campaignRepository from "../../../../src/features/campaigns/repositories/campaign-repository";
@@ -53,6 +54,28 @@ describe("campaign service", () => {
 
 			const result = await fetchCampaignsService("user-1");
 			expect(result).toHaveLength(2);
+		});
+	});
+
+	describe("fetch campaign by id", async () => {
+		it("fetches campaign by id", async () => {
+			const mockedCampaign = {
+				campaign: {
+					id: "campaign-1",
+					name: "campaign-name",
+					createdBy: "user-1",
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+				campaign_member: null,
+			};
+
+			vi.mocked(
+				campaignRepository.fetchCampaignByIdRepository,
+			).mockResolvedValue(mockedCampaign);
+
+			const result = await fetchCampaignByIdService("user-1", "campaign-1");
+			expect(result).toStrictEqual(mockedCampaign);
 		});
 	});
 

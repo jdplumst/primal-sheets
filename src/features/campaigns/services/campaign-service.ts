@@ -3,6 +3,7 @@ import { db } from "@/db";
 import {
 	createCampaignRepository,
 	deleteCampaignRepository,
+	fetchCampaignByIdRepository,
 	fetchCampaignsRepository,
 } from "@/features/campaigns/repositories/campaign-repository";
 
@@ -10,6 +11,13 @@ export const fetchCampaignsService = createServerOnlyFn(
 	async (userId: string) => {
 		const campaigns = await fetchCampaignsRepository(db, userId);
 		return campaigns;
+	},
+);
+
+export const fetchCampaignByIdService = createServerOnlyFn(
+	async (userId: string, campaignId: string) => {
+		const campaign = await fetchCampaignByIdRepository(db, userId, campaignId);
+		return campaign;
 	},
 );
 
