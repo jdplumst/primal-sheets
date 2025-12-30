@@ -36,7 +36,7 @@ export const fetchCampaignByIdRepository = createServerOnlyFn(
 					),
 				)
 		)[0];
-		return campaignData;
+		return campaignData ?? null;
 	},
 );
 
