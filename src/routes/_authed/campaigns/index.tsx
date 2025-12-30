@@ -16,7 +16,7 @@ const CampaignsRoute = () => {
 		<Suspense fallback={<LoadingLayout />}>
 			<Campaigns userId={userId} />
 		</Suspense>
-	)
+	);
 };
 
 export const Route = createFileRoute("/_authed/campaigns/")({
