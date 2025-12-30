@@ -302,7 +302,7 @@ describe("campaign repository", () => {
 				TEST_CAMPAIGNS.testCampaign.campaign.id,
 			);
 
-			expect(result).not.toBeDefined();
+			expect(result).toBeNull();
 		});
 	});
 
