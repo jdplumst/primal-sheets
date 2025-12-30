@@ -1,7 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { LoadingLayout } from "@/layouts/loading-layout";
 import { getSession } from "@/lib/get-session";
 
 export const Route = createFileRoute("/_authed")({
+	pendingComponent: () => <LoadingLayout />,
+	pendingMs: 0,
 	beforeLoad: async () => {
 		const session = await getSession();
 
