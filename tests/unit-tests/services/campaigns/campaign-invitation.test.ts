@@ -57,11 +57,14 @@ describe("campaign invitation repository", () => {
 			vi.mocked(
 				campaignRepository.fetchCampaignByIdRepository,
 			).mockResolvedValue({
-				id: "campaign-1",
-				name: "campaign-name",
-				createdBy: "user-1",
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				campaign: {
+					id: "campaign-1",
+					name: "campaign-name",
+					createdBy: "user-1",
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+				campaign_member: null,
 			});
 
 			vi.mocked(userRepository.fetchUserById).mockResolvedValue({
@@ -109,7 +112,7 @@ describe("campaign invitation repository", () => {
 		it("campaign does not exist", async () => {
 			vi.mocked(
 				campaignRepository.fetchCampaignByIdRepository,
-			).mockResolvedValue(undefined);
+			).mockResolvedValue(null);
 
 			await expect(
 				createCampaignInvitationService("user-1", "campaign-1", "user-2"),
@@ -122,11 +125,14 @@ describe("campaign invitation repository", () => {
 			vi.mocked(
 				campaignRepository.fetchCampaignByIdRepository,
 			).mockResolvedValue({
-				id: "campaign-1",
-				name: "campaign-name",
-				createdBy: "user-2",
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				campaign: {
+					id: "campaign-1",
+					name: "campaign-name",
+					createdBy: "user-2",
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+				campaign_member: null,
 			});
 
 			await expect(
@@ -140,11 +146,14 @@ describe("campaign invitation repository", () => {
 	it("user trying to invite does not exist", async () => {
 		vi.mocked(campaignRepository.fetchCampaignByIdRepository).mockResolvedValue(
 			{
-				id: "campaign-1",
-				name: "campaign-name",
-				createdBy: "user-1",
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				campaign: {
+					id: "campaign-1",
+					name: "campaign-name",
+					createdBy: "user-1",
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+				campaign_member: null,
 			},
 		);
 
@@ -158,11 +167,20 @@ describe("campaign invitation repository", () => {
 	it("user is already a member of the campaign", async () => {
 		vi.mocked(campaignRepository.fetchCampaignByIdRepository).mockResolvedValue(
 			{
-				id: "campaign-1",
-				name: "campaign-name",
-				createdBy: "user-1",
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				campaign: {
+					id: "campaign-1",
+					name: "campaign-name",
+					createdBy: "user-1",
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				},
+				campaign_member: {
+					id: "campaign-member-1",
+					campaignId: "campaign-1",
+					userId: "user-2",
+					roleId: "role-1",
+					joinedAt: new Date(),
+				},
 			},
 		);
 

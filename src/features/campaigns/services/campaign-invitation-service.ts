@@ -23,7 +23,7 @@ export const createCampaignInvitationService = createServerOnlyFn(
 			campaignId,
 		);
 
-		if (!campaignData || campaignData.createdBy !== userId) {
+		if (!campaignData || campaignData.campaign.createdBy !== userId) {
 			throw new Error(
 				"You are not authorized to create an invitation for this campaign",
 			);
