@@ -35,6 +35,7 @@ export const CreateCampaignDialog = ({
 		register,
 		handleSubmit,
 		formState: { errors },
+		reset,
 	} = useForm<FormData>({
 		resolver: zodResolver(createCampaignSchema),
 		defaultValues: {
@@ -44,15 +45,22 @@ export const CreateCampaignDialog = ({
 
 	const { mutate: createCampaign, isPending } = useCreateCampaign({
 		userId,
-		closeDialog: () => onOpenChange(false),
+		closeDialog: () => handleOpenChange(false),
 	});
 
 	const onSubmit = (data: FormData) => {
 		createCampaign(data);
 	};
 
+	const handleOpenChange = (newOpen: boolean) => {
+		if (!newOpen) {
+			reset();
+		}
+		onOpenChange(newOpen);
+	};
+
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogContent>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<DialogHeader>

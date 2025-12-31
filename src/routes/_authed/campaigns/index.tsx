@@ -19,7 +19,7 @@ const CampaignsRoute = () => {
 	);
 };
 
-export const Route = createFileRoute("/_authed/campaigns")({
+export const Route = createFileRoute("/_authed/campaigns/")({
 	component: CampaignsRoute,
 	ssr: false,
 	validateSearch: searchSchema,
