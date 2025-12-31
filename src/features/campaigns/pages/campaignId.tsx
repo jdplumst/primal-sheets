@@ -1,11 +1,7 @@
 import { useParams } from "@tanstack/react-router";
 import { useFetchCampaignById } from "@/features/campaigns/hooks/useFetchCampaignById";
 
-interface CampaignIdProps {
-	userId: string;
-}
-
-export const CampaignId = ({ userId }: CampaignIdProps) => {
+export const CampaignId = () => {
 	const { campaignId } = useParams({ from: "/_authed/campaigns/$campaignId" });
 	const { data: campaign } = useFetchCampaignById(campaignId);
 
