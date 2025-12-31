@@ -344,7 +344,7 @@ describe("campaign repository", () => {
 				TEST_CAMPAIGNS.testCampaign.name,
 			);
 
-			assert(result !== undefined);
+			assert(result !== null);
 			expect(result).toMatchObject(TEST_CAMPAIGNS.testCampaign);
 			expect(result.id).toBeDefined();
 			expect(result.createdAt).toBeInstanceOf(Date);
@@ -411,24 +411,24 @@ describe("campaign repository", () => {
 			expect(result).toBeDefined();
 		});
 
-		it("should return undefined if the campaign does not belong to the user", async () => {
+		it("should return null if the campaign does not belong to the user", async () => {
 			const result = await deleteCampaignRepository(
 				testDb.db,
 				TEST_USERS.testUser.id,
 				TEST_CAMPAIGNS.doesNotBelongToUserCampaign.id,
 			);
 
-			expect(result).not.toBeDefined();
+			expect(result).toBeNull();
 		});
 
-		it("should return undefined if the campaign does not exist", async () => {
+		it("should return null if the campaign does not exist", async () => {
 			const result = await deleteCampaignRepository(
 				testDb.db,
 				TEST_USERS.testUser.id,
 				faker.string.uuid(),
 			);
 
-			expect(result).not.toBeDefined();
+			expect(result).toBeNull();
 		});
 	});
 });

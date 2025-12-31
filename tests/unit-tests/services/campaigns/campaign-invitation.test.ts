@@ -79,7 +79,7 @@ describe("campaign invitation repository", () => {
 
 			vi.mocked(
 				campaignMemberRepository.fetchCampaignMemberRepository,
-			).mockResolvedValue(undefined);
+			).mockResolvedValue(null);
 
 			vi.mocked(
 				campaignInvitationRepository.createCampaignInvitationRepository,
@@ -157,7 +157,7 @@ describe("campaign invitation repository", () => {
 			},
 		);
 
-		vi.mocked(userRepository.fetchUserById).mockResolvedValue(undefined);
+		vi.mocked(userRepository.fetchUserById).mockResolvedValue(null);
 
 		await expect(
 			createCampaignInvitationService("user-1", "campaign-1", "user-2"),

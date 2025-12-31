@@ -50,7 +50,7 @@ export const createCampaignRepository = createServerOnlyFn(
 				createdBy: userId,
 			})
 			.returning();
-		return createdCampaign[0];
+		return createdCampaign[0] ?? null;
 	},
 );
 
@@ -63,6 +63,6 @@ export const deleteCampaignRepository = createServerOnlyFn(
 				.returning()
 		)[0];
 
-		return deletedCampaign;
+		return deletedCampaign ?? null;
 	},
 );

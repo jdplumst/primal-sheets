@@ -16,6 +16,6 @@ export const fetchCampaignMemberRepository = createServerOnlyFn(
 					),
 				)
 		)[0];
-		return campaignMemberData;
+		return campaignMemberData ?? null;
 	},
 );

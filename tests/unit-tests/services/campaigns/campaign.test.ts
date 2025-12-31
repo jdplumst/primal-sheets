@@ -122,7 +122,7 @@ describe("campaign service", () => {
 
 		it("throws error if campaign with campaign does not exist or don't have permission to delete", async () => {
 			vi.mocked(campaignRepository.deleteCampaignRepository).mockResolvedValue(
-				undefined,
+				null,
 			);
 
 			await expect(
