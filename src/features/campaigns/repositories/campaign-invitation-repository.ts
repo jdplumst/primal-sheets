@@ -39,6 +39,6 @@ export const createCampaignInvitationRepository = createServerOnlyFn(
 			})
 			.returning();
 
-		return campaignInvitationData[0];
+		return campaignInvitationData[0] ?? null;
 	},
 );
