@@ -10,6 +10,7 @@ import { INVITATION_STATUS } from "@/features/campaigns/utils/constants";
 import * as campaignInvitationRepository from "../../../../src/features/campaigns/repositories/campaign-invitation-repository";
 import * as campaignRepository from "../../../../src/features/campaigns/repositories/campaign-repository";
 
+vi.mock("@/db", () => ({ db: {} }));
 vi.mock("../../../../src/features/campaigns/repositories/campaign-repository");
 vi.mock(
 	"../../../../src/features/campaigns/repositories/campaign-invitation-repository",

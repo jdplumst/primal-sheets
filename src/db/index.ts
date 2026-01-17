@@ -16,7 +16,6 @@ const client =
 	globalForDb.client ??
 	createClient({
 		url: env.DATABASE_URL,
-		// Turso/libsql tokens are only required for remote DBs.
 		authToken: env.DATABASE_AUTH_TOKEN,
 	});
 if (env.NODE_ENV !== "production") globalForDb.client = client;

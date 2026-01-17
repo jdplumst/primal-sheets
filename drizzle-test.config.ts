@@ -1,12 +1,14 @@
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
+const TEST_DB_URL =
+	process.env.DATABASE_URL ?? `file:${process.cwd()}/tmp/primal-sheets-tests.db`;
+
 export default defineConfig({
 	out: "./drizzle",
 	schema: "./src/db/schema.ts",
-	dialect: "turso",
+	dialect: "sqlite",
 	dbCredentials: {
-		url: process.env.DATABASE_URL as string,
-		authToken: process.env.DATABASE_AUTH_TOKEN as string,
+		url: TEST_DB_URL,
 	},
 });
