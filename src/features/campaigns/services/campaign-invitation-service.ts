@@ -82,7 +82,9 @@ export const acceptCampaignInvitationService = createServerOnlyFn(
 		);
 
 		if (!acceptedInvitation) {
-			throw new Error("Failed to update the invitation status. Please try again.");
+			throw new Error(
+				"Failed to update the invitation status. Please try again.",
+			);
 		}
 
 		return acceptedInvitation;
