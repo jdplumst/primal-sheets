@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import {
 	createTestDb,
 	type TestDb,
@@ -14,7 +14,9 @@ import {
 	user,
 } from "@/db/schema";
 import {
+	acceptCampaignInvitationRepository,
 	createCampaignInvitationRepository,
+	fetchCampaignInvitationByIdRepository,
 	fetchCampaignInvitationsRepository,
 } from "@/features/campaigns/repositories/campaign-invitation-repository";
 import { INVITATION_STATUS } from "@/features/campaigns/utils/constants";
@@ -340,6 +342,207 @@ describe("campaigns repository", () => {
 					TEST_USERS.invitedUser.id,
 				),
 			).rejects.toThrow();
+		});
+	});
+
+	describe("fetch campaign invitation by id", () => {
+		const TEST_USERS = {
+			invitedUser: {
+				id: faker.string.uuid(),
+				name: faker.person.fullName(),
+				email: faker.internet.email(),
+			},
+			inviterUser: {
+				id: faker.string.uuid(),
+				name: faker.person.fullName(),
+				email: faker.internet.email(),
+			},
+		};
+
+		const TEST_INVITATION_STATUS = {
+			id: INVITATION_STATUS.PENDING,
+			name: "pending",
+			description: "Pending invitation",
+		};
+
+		const TEST_CAMPAIGN = {
+			id: faker.string.uuid(),
+			name: "Test Campaign",
+			createdBy: TEST_USERS.inviterUser.id,
+		};
+
+		const TEST_INVITATION = {
+			id: faker.string.uuid(),
+			campaignId: TEST_CAMPAIGN.id,
+			invitedUserId: TEST_USERS.invitedUser.id,
+			invitedByUserId: TEST_USERS.inviterUser.id,
+			statusId: TEST_INVITATION_STATUS.id,
+		};
+
+		beforeAll(async () => {
+			await testDb.db
+				.insert(user)
+				.values([TEST_USERS.invitedUser, TEST_USERS.inviterUser]);
+			await testDb.db.insert(invitationStatus).values(TEST_INVITATION_STATUS);
+			await testDb.db.insert(campaign).values(TEST_CAMPAIGN);
+			await testDb.db.insert(campaignInvitation).values(TEST_INVITATION);
+		});
+
+		afterAll(async () => {
+			await testDb.db
+				.delete(campaignInvitation)
+				.where(eq(campaignInvitation.id, TEST_INVITATION.id));
+			await testDb.db.delete(campaign).where(eq(campaign.id, TEST_CAMPAIGN.id));
+			await testDb.db
+				.delete(invitationStatus)
+				.where(eq(invitationStatus.id, TEST_INVITATION_STATUS.id));
+			const userIds = Object.values(TEST_USERS).map((u) => u.id);
+			await testDb.db.delete(user).where(inArray(user.id, userIds));
+		});
+
+		it("should fetch the correct invitation by id for the specified user", async () => {
+			const result = await fetchCampaignInvitationByIdRepository(
+				testDb.db,
+				TEST_USERS.invitedUser.id,
+				TEST_INVITATION.id,
+			);
+
+			expect(result).toBeDefined();
+			expect(result?.id).toBe(TEST_INVITATION.id);
+			expect(result?.campaignId).toBe(TEST_CAMPAIGN.id);
+			expect(result?.invitedUserId).toBe(TEST_USERS.invitedUser.id);
+			expect(result?.invitedByUserId).toBe(TEST_USERS.inviterUser.id);
+			expect(result?.statusId).toBe(TEST_INVITATION_STATUS.id);
+		});
+
+		it("should return null for non-existent invitation", async () => {
+			const nonExistentId = faker.string.uuid();
+			const result = await fetchCampaignInvitationByIdRepository(
+				testDb.db,
+				TEST_USERS.invitedUser.id,
+				nonExistentId,
+			);
+
+			expect(result).toBeNull();
+		});
+
+		it("should return null for invitation belonging to another user", async () => {
+			const otherUserId = faker.string.uuid();
+			const result = await fetchCampaignInvitationByIdRepository(
+				testDb.db,
+				otherUserId,
+				TEST_INVITATION.id,
+			);
+
+			expect(result).toBeNull();
+		});
+	});
+
+	describe("accept campaign invitation", () => {
+		const TEST_USERS = {
+			invitedUser: {
+				id: faker.string.uuid(),
+				name: faker.person.fullName(),
+				email: faker.internet.email(),
+			},
+			inviterUser: {
+				id: faker.string.uuid(),
+				name: faker.person.fullName(),
+				email: faker.internet.email(),
+			},
+		};
+
+		const TEST_INVITATION_STATUSES = {
+			pending: {
+				id: INVITATION_STATUS.PENDING,
+				name: "pending",
+				description: "Pending invitation",
+			},
+			accepted: {
+				id: INVITATION_STATUS.ACCEPTED,
+				name: "accepted",
+				description: "Accepted invitation",
+			},
+		};
+
+		const TEST_CAMPAIGN = {
+			id: faker.string.uuid(),
+			name: "Test Campaign",
+			createdBy: TEST_USERS.inviterUser.id,
+		};
+
+		const TEST_INVITATION = {
+			id: faker.string.uuid(),
+			campaignId: TEST_CAMPAIGN.id,
+			invitedUserId: TEST_USERS.invitedUser.id,
+			invitedByUserId: TEST_USERS.inviterUser.id,
+			statusId: TEST_INVITATION_STATUSES.pending.id,
+		};
+
+		beforeAll(async () => {
+			await testDb.db
+				.insert(user)
+				.values([TEST_USERS.invitedUser, TEST_USERS.inviterUser]);
+			await testDb.db
+				.insert(invitationStatus)
+				.values(Object.values(TEST_INVITATION_STATUSES));
+			await testDb.db.insert(campaign).values(TEST_CAMPAIGN);
+			await testDb.db.insert(campaignInvitation).values(TEST_INVITATION);
+		});
+
+		afterAll(async () => {
+			await testDb.db
+				.delete(campaignInvitation)
+				.where(eq(campaignInvitation.id, TEST_INVITATION.id));
+			await testDb.db.delete(campaign).where(eq(campaign.id, TEST_CAMPAIGN.id));
+			const statusIds = Object.values(TEST_INVITATION_STATUSES).map(
+				(s) => s.id,
+			);
+			await testDb.db
+				.delete(invitationStatus)
+				.where(inArray(invitationStatus.id, statusIds));
+			const userIds = Object.values(TEST_USERS).map((u) => u.id);
+			await testDb.db.delete(user).where(inArray(user.id, userIds));
+		});
+
+		it("should update the invitation status to accepted", async () => {
+			const result = await acceptCampaignInvitationRepository(
+				testDb.db,
+				TEST_INVITATION.id,
+			);
+
+			expect(result).toBeDefined();
+			expect(result?.id).toBe(TEST_INVITATION.id);
+			expect(result?.statusId).toBe(INVITATION_STATUS.ACCEPTED);
+
+			const [updatedInvitation] = await testDb.db
+				.select()
+				.from(campaignInvitation)
+				.where(eq(campaignInvitation.id, TEST_INVITATION.id));
+
+			expect(updatedInvitation?.statusId).toBe(INVITATION_STATUS.ACCEPTED);
+		});
+
+		it("should return null for non-existent invitation", async () => {
+			const nonExistentId = faker.string.uuid();
+			const result = await acceptCampaignInvitationRepository(
+				testDb.db,
+				nonExistentId,
+			);
+
+			expect(result).toBeNull();
+		});
+
+		it("should handle already accepted invitation", async () => {
+			await acceptCampaignInvitationRepository(testDb.db, TEST_INVITATION.id);
+
+			const result = await acceptCampaignInvitationRepository(
+				testDb.db,
+				TEST_INVITATION.id,
+			);
+
+			expect(result).toBeDefined();
+			expect(result?.statusId).toBe(INVITATION_STATUS.ACCEPTED);
 		});
 	});
 });

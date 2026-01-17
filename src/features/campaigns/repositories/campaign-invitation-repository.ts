@@ -21,6 +21,22 @@ export const fetchCampaignInvitationsRepository = createServerOnlyFn(
 	},
 );
 
+export const fetchCampaignInvitationByIdRepository = createServerOnlyFn(
+	async (db: Database, userId: string, campaignInvitationId: string) => {
+		const invitationData = await db
+			.select()
+			.from(campaignInvitation)
+			.where(
+				and(
+					eq(campaignInvitation.id, campaignInvitationId),
+					eq(campaignInvitation.invitedUserId, userId),
+				),
+			);
+
+		return invitationData[0] ?? null;
+	},
+);
+
 export const createCampaignInvitationRepository = createServerOnlyFn(
 	async (
 		db: Database,
@@ -37,6 +53,18 @@ export const createCampaignInvitationRepository = createServerOnlyFn(
 				invitedByUserId: userId,
 				statusId: INVITATION_STATUS.PENDING,
 			})
+			.returning();
+
+		return campaignInvitationData[0] ?? null;
+	},
+);
+
+export const acceptCampaignInvitationRepository = createServerOnlyFn(
+	async (db: Database, campaignInvitationId: string) => {
+		const campaignInvitationData = await db
+			.update(campaignInvitation)
+			.set({ statusId: INVITATION_STATUS.ACCEPTED })
+			.where(eq(campaignInvitation.id, campaignInvitationId))
 			.returning();
 
 		return campaignInvitationData[0] ?? null;

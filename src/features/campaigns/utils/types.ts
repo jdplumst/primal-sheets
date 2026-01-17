@@ -19,3 +19,7 @@ export const createCampaignInvitationSchema = z.object({
 	campaignId: z.string(),
 	invitedUserId: z.string(),
 });
+
+export const acceptCampaignInvitationSchema = z.object({
+	campaignInvitationId: z.string(),
+});
