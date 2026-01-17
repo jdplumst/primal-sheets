@@ -21,8 +21,7 @@ describe("campaign member repository", () => {
 	});
 
 	afterAll(async () => {
-		await testDb.client.end();
-		await testDb.container.stop();
+		await testDb.cleanup();
 	});
 
 	describe("fetch campaign members", async () => {

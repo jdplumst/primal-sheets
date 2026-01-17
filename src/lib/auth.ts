@@ -17,7 +17,7 @@ export const auth = betterAuth({
 		},
 	},
 	database: drizzleAdapter(db, {
-		provider: "pg",
+		provider: "sqlite",
 	}),
 	plugins: [tanstackStartCookies()],
 });

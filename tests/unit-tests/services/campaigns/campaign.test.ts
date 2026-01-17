@@ -8,6 +8,7 @@ import {
 } from "@/features/campaigns/services/campaign-service";
 import * as campaignRepository from "../../../../src/features/campaigns/repositories/campaign-repository";
 
+vi.mock("@/db", () => ({ db: {} }));
 vi.mock("../../../../src/features/campaigns/repositories/campaign-repository");
 
 describe("campaign service", () => {
