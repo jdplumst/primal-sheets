@@ -16,8 +16,7 @@ describe("user repository", () => {
 	});
 
 	afterAll(async () => {
-		await testDb.client.end();
-		await testDb.container.stop();
+		await testDb.cleanup();
 	});
 
 	describe("fetch user by id", async () => {
