@@ -2,11 +2,14 @@ import { createServerOnlyFn } from "@tanstack/react-start";
 import { db } from "@/db";
 import { fetchUserById } from "@/features/auth/repositories/user-repository";
 import {
+	acceptCampaignInvitationRepository,
 	createCampaignInvitationRepository,
+	fetchCampaignInvitationByIdRepository,
 	fetchCampaignInvitationsRepository,
 } from "@/features/campaigns/repositories/campaign-invitation-repository";
 import { fetchCampaignMemberRepository } from "@/features/campaigns/repositories/campaign-member-repository";
 import { fetchCampaignByIdRepository } from "@/features/campaigns/repositories/campaign-repository";
+import { INVITATION_STATUS } from "@/features/campaigns/utils/constants";
 
 export const fetchCampaignInvitationsService = createServerOnlyFn(
 	async (userId: string) => {
@@ -54,5 +57,34 @@ export const createCampaignInvitationService = createServerOnlyFn(
 			invitedUserId,
 		);
 		return campaignInvitationData;
+	},
+);
+
+export const acceptCampaignInvitationService = createServerOnlyFn(
+	async (userId: string, campaignInvitationId: string) => {
+		const campaignInvitationData = await fetchCampaignInvitationByIdRepository(
+			db,
+			userId,
+			campaignInvitationId,
+		);
+
+		if (!campaignInvitationData) {
+			throw new Error("The invitation you are trying to accept does not exist");
+		}
+
+		if (campaignInvitationData.statusId !== INVITATION_STATUS.PENDING) {
+			throw new Error("This invitation can no longer be accepted");
+		}
+
+		const acceptedInvitation = await acceptCampaignInvitationRepository(
+			db,
+			campaignInvitationId,
+		);
+
+		if (!acceptedInvitation) {
+			throw new Error("Failed to update the invitation status. Please try again.");
+		}
+
+		return acceptedInvitation;
 	},
 );

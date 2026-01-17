@@ -2,9 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as userRepository from "@/features/auth/repositories/user-repository";
 import * as campaignMemberRepository from "@/features/campaigns/repositories/campaign-member-repository";
 import {
+	acceptCampaignInvitationService,
 	createCampaignInvitationService,
 	fetchCampaignInvitationsService,
 } from "@/features/campaigns/services/campaign-invitation-service";
+import { INVITATION_STATUS } from "@/features/campaigns/utils/constants";
 import * as campaignInvitationRepository from "../../../../src/features/campaigns/repositories/campaign-invitation-repository";
 import * as campaignRepository from "../../../../src/features/campaigns/repositories/campaign-repository";
 
@@ -209,5 +211,114 @@ describe("campaign invitation repository", () => {
 		).rejects.toThrow(
 			"The user you are trying to invite is already a member of the campaign",
 		);
+	});
+
+	describe("accept campaign invitation", () => {
+		const mockPendingInvitation = {
+			id: "invitation-1",
+			campaignId: "campaign-1",
+			invitedUserId: "user-1",
+			invitedByUserId: "user-2",
+			statusId: INVITATION_STATUS.PENDING,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		};
+
+		const mockAcceptedInvitation = {
+			...mockPendingInvitation,
+			statusId: INVITATION_STATUS.ACCEPTED,
+		};
+
+		it("successfully accepts a pending invitation", async () => {
+			vi.mocked(
+				campaignInvitationRepository.fetchCampaignInvitationByIdRepository,
+			).mockResolvedValue(mockPendingInvitation);
+
+			vi.mocked(
+				campaignInvitationRepository.acceptCampaignInvitationRepository,
+			).mockResolvedValue(mockAcceptedInvitation);
+
+			const result = await acceptCampaignInvitationService(
+				"user-1",
+				"invitation-1",
+			);
+
+			expect(result).toEqual(mockAcceptedInvitation);
+			expect(
+				campaignInvitationRepository.fetchCampaignInvitationByIdRepository,
+			).toHaveBeenCalledWith(expect.anything(), "user-1", "invitation-1");
+			expect(
+				campaignInvitationRepository.acceptCampaignInvitationRepository,
+			).toHaveBeenCalledWith(expect.anything(), "invitation-1");
+		});
+
+		it("throws error when invitation does not exist", async () => {
+			vi.mocked(
+				campaignInvitationRepository.fetchCampaignInvitationByIdRepository,
+			).mockResolvedValue(null);
+
+			await expect(
+				acceptCampaignInvitationService("user-1", "non-existent-invitation"),
+			).rejects.toThrow(
+				"The invitation you are trying to accept does not exist",
+			);
+
+			expect(
+				campaignInvitationRepository.acceptCampaignInvitationRepository,
+			).not.toHaveBeenCalled();
+		});
+
+		it("throws error when invitation is not pending", async () => {
+			vi.mocked(
+				campaignInvitationRepository.fetchCampaignInvitationByIdRepository,
+			).mockResolvedValue(mockAcceptedInvitation);
+
+			await expect(
+				acceptCampaignInvitationService("user-1", "invitation-1"),
+			).rejects.toThrow("This invitation can no longer be accepted");
+
+			expect(
+				campaignInvitationRepository.acceptCampaignInvitationRepository,
+			).not.toHaveBeenCalled();
+		});
+
+		it("throws error when repository fails to accept the invitation", async () => {
+			vi.mocked(
+				campaignInvitationRepository.fetchCampaignInvitationByIdRepository,
+			).mockResolvedValue(mockPendingInvitation);
+
+			vi.mocked(
+				campaignInvitationRepository.acceptCampaignInvitationRepository,
+			).mockResolvedValue(null);
+
+			await expect(
+				acceptCampaignInvitationService("user-1", "invitation-1"),
+			).rejects.toThrow(
+				"Failed to update the invitation status. Please try again.",
+			);
+
+			expect(
+				campaignInvitationRepository.fetchCampaignInvitationByIdRepository,
+			).toHaveBeenCalledWith(expect.anything(), "user-1", "invitation-1");
+			expect(
+				campaignInvitationRepository.acceptCampaignInvitationRepository,
+			).toHaveBeenCalledWith(expect.anything(), "invitation-1");
+		});
+
+		it("throws error when accepting another user's invitation", async () => {
+			vi.mocked(
+				campaignInvitationRepository.fetchCampaignInvitationByIdRepository,
+			).mockResolvedValue(null);
+
+			await expect(
+				acceptCampaignInvitationService("user-1", "invitation-1"),
+			).rejects.toThrow(
+				"The invitation you are trying to accept does not exist",
+			);
+
+			expect(
+				campaignInvitationRepository.acceptCampaignInvitationRepository,
+			).not.toHaveBeenCalled();
+		});
 	});
 });

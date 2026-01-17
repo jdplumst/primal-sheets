@@ -1,9 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import {
+	acceptCampaignInvitationService,
 	createCampaignInvitationService,
 	fetchCampaignInvitationsService,
 } from "@/features/campaigns/services/campaign-invitation-service";
-import { createCampaignInvitationSchema } from "@/features/campaigns/utils/types";
+import {
+	acceptCampaignInvitationSchema,
+	createCampaignInvitationSchema,
+} from "@/features/campaigns/utils/types";
 import { authMiddleware } from "@/lib/auth-middleware";
 
 export const fetchCampaignInvitations = createServerFn({ method: "GET" })
@@ -23,6 +27,18 @@ export const createCampaignInvitation = createServerFn({ method: "POST" })
 			user.id,
 			data.campaignId,
 			data.invitedUserId,
+		);
+		return campaignInvitation;
+	});
+
+export const acceptCampaignInvitation = createServerFn({ method: "POST" })
+	.inputValidator(acceptCampaignInvitationSchema)
+	.middleware([authMiddleware])
+	.handler(async ({ context, data }) => {
+		const { user } = context;
+		const campaignInvitation = await acceptCampaignInvitationService(
+			user.id,
+			data.campaignInvitationId,
 		);
 		return campaignInvitation;
 	});
