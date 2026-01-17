@@ -14,5 +14,4 @@ const CampaignsIdRoute = () => {
 };
 export const Route = createFileRoute("/_authed/campaigns/$campaignId")({
 	component: CampaignsIdRoute,
-	ssr: false,
 });

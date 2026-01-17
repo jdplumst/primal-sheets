@@ -21,7 +21,6 @@ const CampaignsRoute = () => {
 
 export const Route = createFileRoute("/_authed/campaigns/")({
 	component: CampaignsRoute,
-	ssr: false,
 	validateSearch: searchSchema,
 	beforeLoad: ({ search }) => {
 		if (search.code || search.state) {
