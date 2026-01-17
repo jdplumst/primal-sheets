@@ -1,38 +1,38 @@
-import { relations } from "drizzle-orm";
-import { text, timestamp } from "drizzle-orm/pg-core";
-import { pgTable } from "@/db/table-creator";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { user } from "@/features/auth/db/auth-schema";
 
 // Lookup table for invitation status
-export const invitationStatus = pgTable("invitation_status", {
+export const invitationStatus = sqliteTable("invitation_status", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull().unique(),
 	description: text("description"),
 });
 
 // Lookup table for campaign member roles
-export const campaignMemberRole = pgTable("campaign_member_role", {
+export const campaignMemberRole = sqliteTable("campaign_member_role", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull().unique(),
 	description: text("description"),
 });
 
 // Campaign table
-export const campaign = pgTable("campaign", {
+export const campaign = sqliteTable("campaign", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull(),
 	createdBy: text("created_by")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
+	createdAt: integer("created_at", { mode: "timestamp_ms" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+		.notNull()
+		.$defaultFn(() => new Date())
+		.$onUpdateFn(() => new Date()),
 });
 
 // Campaign member table (with role)
-export const campaignMember = pgTable("campaign_member", {
+export const campaignMember = sqliteTable("campaign_member", {
 	id: text("id").primaryKey(),
 	campaignId: text("campaign_id")
 		.notNull()
@@ -43,11 +43,13 @@ export const campaignMember = pgTable("campaign_member", {
 	roleId: text("role_id")
 		.notNull()
 		.references(() => campaignMemberRole.id, { onDelete: "restrict" }),
-	joinedAt: timestamp("joined_at").defaultNow().notNull(),
+	joinedAt: integer("joined_at", { mode: "timestamp_ms" })
+		.notNull()
+		.$defaultFn(() => new Date()),
 });
 
 // Campaign invitation table (using status lookup)
-export const campaignInvitation = pgTable("campaign_invitation", {
+export const campaignInvitation = sqliteTable("campaign_invitation", {
 	id: text("id").primaryKey(),
 	campaignId: text("campaign_id")
 		.notNull()
@@ -61,70 +63,11 @@ export const campaignInvitation = pgTable("campaign_invitation", {
 	statusId: text("status_id")
 		.notNull()
 		.references(() => invitationStatus.id, { onDelete: "restrict" }),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
+	createdAt: integer("created_at", { mode: "timestamp_ms" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+		.notNull()
+		.$defaultFn(() => new Date())
+		.$onUpdateFn(() => new Date()),
 });
-
-// Relations
-export const invitationStatusRelations = relations(
-	invitationStatus,
-	({ many }) => ({
-		invitations: many(campaignInvitation),
-	}),
-);
-
-export const campaignMemberRoleRelations = relations(
-	campaignMemberRole,
-	({ many }) => ({
-		members: many(campaignMember),
-	}),
-);
-
-export const campaignRelations = relations(campaign, ({ one, many }) => ({
-	creator: one(user, {
-		fields: [campaign.createdBy],
-		references: [user.id],
-	}),
-	members: many(campaignMember),
-	invitations: many(campaignInvitation),
-}));
-
-export const campaignMemberRelations = relations(campaignMember, ({ one }) => ({
-	campaign: one(campaign, {
-		fields: [campaignMember.campaignId],
-		references: [campaign.id],
-	}),
-	user: one(user, {
-		fields: [campaignMember.userId],
-		references: [user.id],
-	}),
-	role: one(campaignMemberRole, {
-		fields: [campaignMember.roleId],
-		references: [campaignMemberRole.id],
-	}),
-}));
-
-export const campaignInvitationRelations = relations(
-	campaignInvitation,
-	({ one }) => ({
-		campaign: one(campaign, {
-			fields: [campaignInvitation.campaignId],
-			references: [campaign.id],
-		}),
-		invitedUser: one(user, {
-			fields: [campaignInvitation.invitedUserId],
-			references: [user.id],
-		}),
-		inviter: one(user, {
-			fields: [campaignInvitation.invitedByUserId],
-			references: [user.id],
-		}),
-		status: one(invitationStatus, {
-			fields: [campaignInvitation.statusId],
-			references: [invitationStatus.id],
-		}),
-	}),
-);

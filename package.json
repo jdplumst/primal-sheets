@@ -13,6 +13,10 @@
     "lint:fix": "biome lint --fix",
     "check": "biome check",
     "check:fix": "biome check --fix",
+    "db:generate-dev": "drizzle-kit generate --config=drizzle-dev.config.ts",
+    "db:generate-prod": "drizzle-kit generate --config=drizzle-prod.config.ts",
+    "db:migrate-dev": "drizzle-kit migrate --config=drizzle-dev.config.ts",
+    "db:migrate-prod": "drizzle-kit migrate --config=drizzle-prod.config.ts",
     "db:push-dev": "drizzle-kit push --config=drizzle-dev.config.ts",
     "db:push-prod": "drizzle-kit push --config=drizzle-prod.config.ts",
     "db:studio-dev": "drizzle-kit studio --config=drizzle-dev.config.ts",
@@ -24,6 +28,7 @@
   "dependencies": {
     "@faker-js/faker": "^10.0.0",
     "@hookform/resolvers": "^5.2.2",
+    "@libsql/client": "^0.17.0",
     "@neondatabase/serverless": "^1.0.2",
     "@netlify/vite-plugin-tanstack-start": "^1.1.3",
     "@radix-ui/react-dialog": "^1.1.15",
