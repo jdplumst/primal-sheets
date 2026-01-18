@@ -10,18 +10,17 @@ const searchSchema = z.object({
 });
 
 const CampaignsRoute = () => {
-	const { userId } = Route.useRouteContext();
-
 	return (
 		<Suspense fallback={<LoadingLayout />}>
-			<Campaigns userId={userId} />
+			<Campaigns />
 		</Suspense>
 	);
 };
 
-export const Route = createFileRoute("/_authed/campaigns/")({
+export const Route = createFileRoute("/campaigns/")({
 	component: CampaignsRoute,
 	validateSearch: searchSchema,
+	ssr: false,
 	beforeLoad: ({ search }) => {
 		if (search.code || search.state) {
 			throw redirect({ to: "/campaigns" });

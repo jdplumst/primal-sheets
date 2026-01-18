@@ -1,10 +1,20 @@
-import { useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useSession } from "@/features/auth/hooks/useSession";
 import { useSignIn } from "@/features/auth/hooks/useSignIn";
 
 export const Home = () => {
+	const navigate = useNavigate();
 	const { error, error_description } = useSearch({ from: "/" });
+
+	// const { data: auth } = authClient.useSession();
+	const { data: session } = useSession();
+
+	if (session.data?.session.userId) {
+		navigate({ to: "/campaigns" });
+	}
+
 	const signIn = useSignIn();
 
 	if (error) {

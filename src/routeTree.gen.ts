@@ -9,87 +9,73 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthedCampaignsIndexRouteImport } from './routes/_authed/campaigns/index'
+import { Route as CampaignsIndexRouteImport } from './routes/campaigns/index'
+import { Route as CampaignsCampaignIdRouteImport } from './routes/campaigns/$campaignId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as AuthedCampaignsCampaignIdRouteImport } from './routes/_authed/campaigns/$campaignId'
 
-const AuthedRoute = AuthedRouteImport.update({
-  id: '/_authed',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthedCampaignsIndexRoute = AuthedCampaignsIndexRouteImport.update({
+const CampaignsIndexRoute = CampaignsIndexRouteImport.update({
   id: '/campaigns/',
   path: '/campaigns/',
-  getParentRoute: () => AuthedRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampaignsCampaignIdRoute = CampaignsCampaignIdRouteImport.update({
+  id: '/campaigns/$campaignId',
+  path: '/campaigns/$campaignId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthedCampaignsCampaignIdRoute =
-  AuthedCampaignsCampaignIdRouteImport.update({
-    id: '/campaigns/$campaignId',
-    path: '/campaigns/$campaignId',
-    getParentRoute: () => AuthedRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/campaigns/$campaignId': typeof AuthedCampaignsCampaignIdRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdRoute
+  '/campaigns': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/campaigns': typeof AuthedCampaignsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/campaigns/$campaignId': typeof AuthedCampaignsCampaignIdRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdRoute
+  '/campaigns': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/campaigns': typeof AuthedCampaignsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_authed': typeof AuthedRouteWithChildren
-  '/_authed/campaigns/$campaignId': typeof AuthedCampaignsCampaignIdRoute
+  '/campaigns/$campaignId': typeof CampaignsCampaignIdRoute
+  '/campaigns/': typeof CampaignsIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/_authed/campaigns/': typeof AuthedCampaignsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/campaigns/$campaignId' | '/api/auth/$' | '/campaigns'
+  fullPaths: '/' | '/campaigns/$campaignId' | '/campaigns' | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/campaigns/$campaignId' | '/api/auth/$' | '/campaigns'
+  to: '/' | '/campaigns/$campaignId' | '/campaigns' | '/api/auth/$'
   id:
     | '__root__'
     | '/'
-    | '/_authed'
-    | '/_authed/campaigns/$campaignId'
+    | '/campaigns/$campaignId'
+    | '/campaigns/'
     | '/api/auth/$'
-    | '/_authed/campaigns/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthedRoute: typeof AuthedRouteWithChildren
+  CampaignsCampaignIdRoute: typeof CampaignsCampaignIdRoute
+  CampaignsIndexRoute: typeof CampaignsIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_authed': {
-      id: '/_authed'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -97,12 +83,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authed/campaigns/': {
-      id: '/_authed/campaigns/'
+    '/campaigns/': {
+      id: '/campaigns/'
       path: '/campaigns'
       fullPath: '/campaigns'
-      preLoaderRoute: typeof AuthedCampaignsIndexRouteImport
-      parentRoute: typeof AuthedRoute
+      preLoaderRoute: typeof CampaignsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campaigns/$campaignId': {
+      id: '/campaigns/$campaignId'
+      path: '/campaigns/$campaignId'
+      fullPath: '/campaigns/$campaignId'
+      preLoaderRoute: typeof CampaignsCampaignIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -111,32 +104,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authed/campaigns/$campaignId': {
-      id: '/_authed/campaigns/$campaignId'
-      path: '/campaigns/$campaignId'
-      fullPath: '/campaigns/$campaignId'
-      preLoaderRoute: typeof AuthedCampaignsCampaignIdRouteImport
-      parentRoute: typeof AuthedRoute
-    }
   }
 }
 
-interface AuthedRouteChildren {
-  AuthedCampaignsCampaignIdRoute: typeof AuthedCampaignsCampaignIdRoute
-  AuthedCampaignsIndexRoute: typeof AuthedCampaignsIndexRoute
-}
-
-const AuthedRouteChildren: AuthedRouteChildren = {
-  AuthedCampaignsCampaignIdRoute: AuthedCampaignsCampaignIdRoute,
-  AuthedCampaignsIndexRoute: AuthedCampaignsIndexRoute,
-}
-
-const AuthedRouteWithChildren =
-  AuthedRoute._addFileChildren(AuthedRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthedRoute: AuthedRouteWithChildren,
+  CampaignsCampaignIdRoute: CampaignsCampaignIdRoute,
+  CampaignsIndexRoute: CampaignsIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

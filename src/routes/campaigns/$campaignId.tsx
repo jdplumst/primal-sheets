@@ -4,14 +4,13 @@ import { CampaignId } from "@/features/campaigns/pages/campaignId";
 import { LoadingLayout } from "@/layouts/loading-layout";
 
 const CampaignsIdRoute = () => {
-	const { userId } = Route.useRouteContext();
-
 	return (
 		<Suspense fallback={<LoadingLayout />}>
-			<CampaignId userId={userId} />
+			<CampaignId />
 		</Suspense>
 	);
 };
-export const Route = createFileRoute("/_authed/campaigns/$campaignId")({
+export const Route = createFileRoute("/campaigns/$campaignId")({
 	component: CampaignsIdRoute,
+	ssr: false,
 });

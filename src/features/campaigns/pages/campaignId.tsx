@@ -1,13 +1,8 @@
 import { useParams } from "@tanstack/react-router";
 import { useFetchCampaignById } from "@/features/campaigns/hooks/useFetchCampaignById";
 
-interface CampaignIdProps {
-	userId: string;
-}
-
-//@ts-expect-error will likely use prop later on
-export const CampaignId = ({ userId }: CampaignIdProps) => {
-	const { campaignId } = useParams({ from: "/_authed/campaigns/$campaignId" });
+export const CampaignId = () => {
+	const { campaignId } = useParams({ from: "/campaigns/$campaignId" });
 	const { data: campaign } = useFetchCampaignById(campaignId);
 
 	if (!campaign) {

@@ -1,15 +1,19 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSession } from "@/features/auth/hooks/useSession";
 import { CampaignsList } from "@/features/campaigns/components/campaigns-list";
 import { authClient } from "@/lib/auth-client";
 
-interface CampaignsProps {
-	userId: string;
-}
-
-export const Campaigns = ({ userId }: CampaignsProps) => {
+export const Campaigns = () => {
 	const navigate = useNavigate();
+
+	// const { data: auth, isPending } = authClient.useSession();
+	const { data: session } = useSession();
+
+	if (!session.data?.session.userId) {
+		navigate({ to: "/campaigns" });
+	}
 
 	const handleSignOut = async () => {
 		await authClient.signOut({
@@ -31,7 +35,7 @@ export const Campaigns = ({ userId }: CampaignsProps) => {
 						<TabsTrigger value="campaigns-invite">Invites</TabsTrigger>
 					</TabsList>
 					<TabsContent value="campaigns">
-						<CampaignsList userId={userId} />
+						<CampaignsList userId={session.data?.session.userId || ""} />
 					</TabsContent>
 				</Tabs>
 			</div>
