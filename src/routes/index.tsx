@@ -9,6 +9,6 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/")({
 	component: Home,
-	ssr: true,
+	ssr: false,
 	validateSearch: searchSchema,
 });
