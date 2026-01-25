@@ -23,7 +23,7 @@
     "hono": "^4.7.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.2.4",
     "@types/node": "^25.0.10",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0",
