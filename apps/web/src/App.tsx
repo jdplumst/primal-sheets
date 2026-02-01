@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { api } from "./rpc";
+import { hono } from "./rpc";
 
 function App() {
 	const [message, setMessage] = useState("");
 	useEffect(() => {
-		api.index.$get().then(async (res) => {
+		hono.api.$get().then(async (res) => {
 			const data = await res.json();
 			setMessage(data.message);
 		});
-	});
+	}, []);
 
 	return (
 		<div>
