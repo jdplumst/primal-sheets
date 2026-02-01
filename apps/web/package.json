@@ -13,6 +13,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "api": "*",
+    "hono": "^4.11.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
