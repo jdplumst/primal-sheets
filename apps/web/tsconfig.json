@@ -22,8 +22,10 @@
 
     "types": ["vite/client"],
 
+    "baseUrl": ".",
     "paths": {
       "api": ["../api/src/index.ts"],
+      "@/*": ["./src/*"],
     },
   },
   "include": ["src"],

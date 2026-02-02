@@ -4,7 +4,13 @@ import auth from "./features/auth";
 import test from "./features/test";
 
 const app = new Hono()
-	.use("*", cors())
+	.use(
+		"*",
+		cors({
+			origin: process.env.CLIENT_URL ?? "http://localhost:5173",
+			credentials: true,
+		}),
+	)
 	.route("/api", test)
 	.route("/api/auth", auth);
 
