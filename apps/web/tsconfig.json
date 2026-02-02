@@ -20,12 +20,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
 
     "baseUrl": ".",
     "paths": {
       "api": ["../api/src/index.ts"],
-      "@/*": ["./src/*"],
+      "@/*": ["./src/*", "../api/src/*"]
     },
   },
   "include": ["src"],

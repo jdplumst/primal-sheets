@@ -4,6 +4,8 @@
     "": {
       "name": "primal-sheets",
       "devDependencies": {
+        "@types/node": "^25.0.10",
+        "@types/react": "^19.2.10",
         "turbo": "^2.7.6",
         "typescript": "5.9.2",
       },
