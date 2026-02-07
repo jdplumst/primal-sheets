@@ -1,22 +1,7 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { authClient } from "./lib/auth-client";
 
 function App() {
-	const navigate = useNavigate();
-
-	const { data: session } = useSuspenseQuery(
-		queryOptions({
-			queryKey: ["auth"],
-			queryFn: () => authClient.getSession(),
-		}),
-	);
-
-	if (session.data?.session.userId) {
-		navigate("/404");
-	}
-
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
 			<div className="absolute inset-0">
@@ -42,7 +27,13 @@ function App() {
 
 				<div className="space-y-4">
 					<Button
-						// onClick={() => signIn.mutate()}
+						onClick={() =>
+							authClient.signIn.social({
+								provider: "discord",
+								callbackURL: `${import.meta.env.VITE_CLIENT_URL}/campaigns`,
+								errorCallbackURL: "/error",
+							})
+						}
 						size="lg"
 						className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
 					>

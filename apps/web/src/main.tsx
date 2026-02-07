@@ -4,6 +4,8 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { Spinner } from "@/components/ui/spinner.tsx";
+import { Campaigns } from "@/features/campaigns/pages/campaigns.tsx";
+import { ProtectedLayout } from "@/layouts/protected-layout.tsx";
 import App from "./App.tsx";
 
 const rootElement = document.getElementById("root");
@@ -17,7 +19,12 @@ createRoot(rootElement).render(
 			<Suspense fallback={<Spinner />}>
 				<BrowserRouter>
 					<Routes>
-						<Route path="/" element={<App />} />
+						<Route element={<ProtectedLayout isProtected={false} />}>
+							<Route path="/" element={<App />} />
+						</Route>
+						<Route element={<ProtectedLayout isProtected />}>
+							<Route path="/campaigns" element={<Campaigns />} />
+						</Route>
 					</Routes>
 				</BrowserRouter>
 			</Suspense>
