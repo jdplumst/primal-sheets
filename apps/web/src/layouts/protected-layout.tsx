@@ -25,5 +25,5 @@ export const ProtectedLayout = ({ isProtected }: ProtectedLayoutProps) => {
 		}
 	}, [navigate, session, isProtected]);
 
-	return <Outlet />;
+	return <Outlet context={{ userId: session.data?.session.userId }} />;
 };
