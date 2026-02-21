@@ -25,6 +25,7 @@
     "baseUrl": ".",
     "paths": {
       "api": ["../api/src/index.ts"],
+      "schemas": ["../../packages/schemas/src/index.ts"],
       "@/*": ["./src/*", "../api/src/*"]
     },
   },

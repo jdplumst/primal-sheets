@@ -15,7 +15,8 @@
     "types": ["bun-types"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "schemas": ["../../packages/schemas/src/index.ts"]
     }
   },
   "include": ["src", "tests", "drizzle.config.ts"]
