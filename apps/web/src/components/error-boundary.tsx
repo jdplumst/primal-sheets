@@ -9,12 +9,12 @@ class ErrorBoundaryInner extends Component<
 		onError: (error: Error) => void;
 		fallback?: (error: Error) => React.ReactNode;
 	},
-	{ hasError: boolean; error: Error | null }
+	{ error: Error | null }
 > {
-	state = { hasError: false, error: null };
+	state = { error: null };
 
 	static getDerivedStateFromError(error: Error) {
-		return { hasError: true, error };
+		return { error };
 	}
 
 	componentDidCatch(error: Error) {
@@ -22,7 +22,7 @@ class ErrorBoundaryInner extends Component<
 	}
 
 	render() {
-		if (this.state.hasError && this.state.error)
+		if (this.state.error)
 			return this.props.fallback?.(this.state.error) ?? null;
 		return this.props.children;
 	}
