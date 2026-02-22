@@ -28,12 +28,23 @@ const app = new Hono<AuthenticatedContext>()
 		}
 		return c.json(res.data, res.code);
 	})
-	.post("/", zValidator("json", createCampaignBody), async (c) => {
-		const userId = c.get("userId");
-		const body = c.req.valid("json");
-		const res = await createCampaignService(userId, body.campaignName);
-		return c.json(res.data, res.code);
-	})
+	.post(
+		"/",
+		zValidator("json", createCampaignBody, (result, c) => {
+			if (!result.success) {
+				return c.json(
+					result.error.issues.map((i) => i.message).join(", "),
+					400,
+				);
+			}
+		}),
+		async (c) => {
+			const userId = c.get("userId");
+			const body = c.req.valid("json");
+			const res = await createCampaignService(userId, body.campaignName);
+			return c.json(res.data, res.code);
+		},
+	)
 	.delete("/:id", zValidator("param", deleteCampaignParam), async (c) => {
 		const userId = c.get("userId");
 		const param = c.req.valid("param");

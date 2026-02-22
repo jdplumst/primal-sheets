@@ -16,10 +16,9 @@ export const useCreateCampaign = ({
 	return useMutation({
 		mutationFn: async (data: { campaignName: string }) => {
 			const res = await hono.api.campaigns.$post({ json: data });
-			// need to refactor zValidator return type then refactor this
 			if (!res.ok) {
 				const error = await res.json();
-				throw error;
+				throw new Error(error as string);
 			}
 
 			return await res.json();
