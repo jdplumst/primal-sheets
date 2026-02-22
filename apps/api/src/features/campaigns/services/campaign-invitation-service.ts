@@ -67,11 +67,14 @@ export async function acceptCampaignInvitationService(
 	);
 
 	if (!campaignInvitationData) {
-		throw new Error("The invitation you are trying to accept does not exist");
+		return errResult(
+			"The invitation you are trying to accept does not exist",
+			404,
+		);
 	}
 
 	if (campaignInvitationData.statusId !== INVITATION_STATUS.PENDING) {
-		throw new Error("This invitation can no longer be accepted");
+		return errResult("This invitation can no longer be accepted", 409);
 	}
 
 	const acceptedInvitation = await acceptCampaignInvitationRepository(
@@ -80,10 +83,11 @@ export async function acceptCampaignInvitationService(
 	);
 
 	if (!acceptedInvitation) {
-		throw new Error(
+		return errResult(
 			"Failed to update the invitation status. Please try again.",
+			500,
 		);
 	}
 
-	return acceptedInvitation;
+	return okResult(acceptedInvitation, 200);
 }

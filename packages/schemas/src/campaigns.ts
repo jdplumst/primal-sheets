@@ -23,6 +23,6 @@ export const createCampaignInvitationBody = z.object({
 	invitedUserId: z.string(),
 });
 
-export const acceptCampaignInvitationSchema = z.object({
-	campaignInvitationId: z.string(),
+export const patchCampaignInvitationParam = z.object({
+	invitationId: z.string(),
 });
