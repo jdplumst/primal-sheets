@@ -17,6 +17,12 @@ export async function fetchCampaignByIdService(
 	campaignId: string,
 ) {
 	const campaign = await fetchCampaignByIdRepository(db, userId, campaignId);
+	if (!campaign) {
+		return errResult(
+			"The campaign you are trying to fetch does not exist or you don't have permission to fetch it",
+			404,
+		);
+	}
 	return okResult(campaign, 200);
 }
 
