@@ -1,7 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import type { ContentfulStatusCode } from "hono/utils/http-status";
-import { createCampaignSchema, deleteCampaignSchema } from "schemas";
+import { createCampaignBody, deleteCampaignParam } from "schemas";
 import {
 	createCampaignService,
 	deleteCampaignService,
@@ -12,19 +11,16 @@ import type { AuthenticatedContext } from "@/types";
 const app = new Hono<AuthenticatedContext>()
 	.get("/", async (c) => {
 		const userId = c.get("userId");
-		const campaigns = await fetchCampaignsService(userId);
-		return c.json(campaigns);
+		const result = await fetchCampaignsService(userId);
+		return c.json(result.data, result.code);
 	})
-	.post("/", zValidator("json", createCampaignSchema), async (c) => {
+	.post("/", zValidator("json", createCampaignBody), async (c) => {
 		const userId = c.get("userId");
 		const body = c.req.valid("json");
-		const createdCampaign = await createCampaignService(
-			userId,
-			body.campaignName,
-		);
-		return c.json(createdCampaign);
+		const result = await createCampaignService(userId, body.campaignName);
+		return c.json(result.data, result.code);
 	})
-	.delete("/:id", zValidator("param", deleteCampaignSchema), async (c) => {
+	.delete("/:id", zValidator("param", deleteCampaignParam), async (c) => {
 		const userId = c.get("userId");
 		const param = c.req.valid("param");
 		const result = await deleteCampaignService(userId, param.id);

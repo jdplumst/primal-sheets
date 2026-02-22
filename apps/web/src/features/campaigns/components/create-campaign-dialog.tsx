@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useId } from "react";
 import { useForm } from "react-hook-form";
-import { createCampaignSchema } from "schemas";
+import { createCampaignBody } from "schemas";
 import type z from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCreateCampaign } from "@/features/campaigns/hooks/useCreateCampaign";
 
-type FormData = z.infer<typeof createCampaignSchema>;
+type FormData = z.infer<typeof createCampaignBody>;
 
 interface CreateCampaignDialogProps {
 	userId: string;
@@ -37,7 +37,7 @@ export const CreateCampaignDialog = ({
 		formState: { errors },
 		reset,
 	} = useForm<FormData>({
-		resolver: zodResolver(createCampaignSchema),
+		resolver: zodResolver(createCampaignBody),
 		defaultValues: {
 			campaignName: "",
 		},

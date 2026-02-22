@@ -4,14 +4,14 @@ export const fetchCampaignByIdSchema = z.object({
 	campaignId: z.string(),
 });
 
-export const createCampaignSchema = z.object({
+export const createCampaignBody = z.object({
 	campaignName: z
 		.string()
 		.min(1, "Campaign name is required")
 		.max(100, "Campaign name must be less than 100 characters"),
 });
 
-export const deleteCampaignSchema = z.object({
+export const deleteCampaignParam = z.object({
 	id: z.string(),
 });
 

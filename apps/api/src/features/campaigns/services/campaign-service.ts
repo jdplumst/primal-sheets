@@ -9,7 +9,7 @@ import { errResult, okResult } from "@/utils/result";
 
 export async function fetchCampaignsService(userId: string) {
 	const campaigns = await fetchCampaignsRepository(db, userId);
-	return campaigns;
+	return okResult(campaigns, 200);
 }
 
 export async function fetchCampaignByIdService(
@@ -17,7 +17,7 @@ export async function fetchCampaignByIdService(
 	campaignId: string,
 ) {
 	const campaign = await fetchCampaignByIdRepository(db, userId, campaignId);
-	return campaign;
+	return okResult(campaign, 200);
 }
 
 export async function createCampaignService(
@@ -29,7 +29,7 @@ export async function createCampaignService(
 		userId,
 		campaignName,
 	);
-	return createdCampaign;
+	return okResult(createdCampaign, 200);
 }
 
 export async function deleteCampaignService(
