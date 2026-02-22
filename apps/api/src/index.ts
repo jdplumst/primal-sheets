@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { auth } from "@/features/auth/lib/auth";
 import type { Context } from "@/types";
 import authRouter, { requireAuth } from "./features/auth";
+import campaignInvitationsRouter from "./features/campaigns/routes/campaign-invitation-routes";
 import campaignsRouter from "./features/campaigns/routes/campaign-routes";
 import invitationsRouter from "./features/campaigns/routes/invitation-routes";
 import test from "./features/test";
@@ -35,7 +36,8 @@ const app = new Hono<Context>()
 	.route("/api", test)
 	.route("/api/auth", authRouter)
 	.route("/api/campaigns", campaignsRouter)
-	.route("/api/invitations", invitationsRouter);
+	.route("/api/invitations", invitationsRouter)
+	.route("/api/campaigns/:campaignId/invitations", campaignInvitationsRouter);
 
 export default app;
 export type AppType = typeof app;

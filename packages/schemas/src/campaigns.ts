@@ -15,8 +15,11 @@ export const deleteCampaignParam = z.object({
 	id: z.string(),
 });
 
-export const createCampaignInvitationSchema = z.object({
+export const createCampaignInvitationParam = z.object({
 	campaignId: z.string(),
+});
+
+export const createCampaignInvitationBody = z.object({
 	invitedUserId: z.string(),
 });
 
