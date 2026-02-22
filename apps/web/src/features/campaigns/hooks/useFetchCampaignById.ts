@@ -13,9 +13,7 @@ export const useFetchCampaignById = (campaignId: string) => {
 				if (!res.ok) {
 					// try using when adding error boundary
 					// const error = await res.json();
-					// const message =
-					// 	"message" in error ? error.message : "Fallback error!";
-					// throw new Error(message);
+					// throw new Error(error as string);
 					return null;
 				}
 				return res.json();

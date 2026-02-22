@@ -15,8 +15,8 @@ export const useDeleteCampaign = ({ userId }: UseDeleteCampaignOptions) => {
 				param: { id: data.id },
 			});
 			if (!res.ok) {
-				const error = res.json();
-				throw error;
+				const error = await res.json();
+				throw new Error(error as string);
 			}
 		},
 		onSuccess: () => {

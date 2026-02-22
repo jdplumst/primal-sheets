@@ -24,7 +24,7 @@ const app = new Hono<AuthenticatedContext>()
 		const { id } = c.req.valid("param");
 		const res = await fetchCampaignByIdService(userId, id);
 		if (!res.ok) {
-			return c.json({ message: res.error }, res.code);
+			return c.json(res.error, res.code);
 		}
 		return c.json(res.data, res.code);
 	})
@@ -39,7 +39,7 @@ const app = new Hono<AuthenticatedContext>()
 		const param = c.req.valid("param");
 		const res = await deleteCampaignService(userId, param.id);
 		if (!res.ok) {
-			return c.json({ message: res.error }, res.code);
+			return c.json(res.error, res.code);
 		}
 		return c.json(res.data, res.code);
 	});
