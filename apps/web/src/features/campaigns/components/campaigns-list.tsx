@@ -22,6 +22,7 @@ import {
 	ItemTitle,
 } from "@/components/ui/item";
 import { CreateCampaignDialog } from "@/features/campaigns/components/create-campaign-dialog";
+import { DeleteCampaignDialog } from "@/features/campaigns/components/delete-campaign-dialog";
 import { useFetchCampaigns } from "@/features/campaigns/hooks/useFetchCampaigns";
 import { useUserId } from "@/hooks/useUserId";
 
@@ -91,11 +92,11 @@ export const CampaignsList = () => {
 				open={isCreateDialogOpen}
 				onOpenChange={setIsCreateDialogOpen}
 			/>
-			{/* <DeleteCampaignDialog
+			<DeleteCampaignDialog
 				userId={userId}
 				campaignId={campaignToDelete}
 				onClose={() => setCampaignToDelete(null)}
-			/> */}
+			/>
 		</>
 	);
 };
