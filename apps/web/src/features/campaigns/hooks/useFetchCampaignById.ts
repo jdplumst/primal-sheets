@@ -1,5 +1,6 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { QUERY_KEY, STALE_TIME } from "@/lib/constants";
+import { AppError } from "@/lib/utils";
 import { hono } from "@/rpc";
 
 export const useFetchCampaignById = (campaignId: string) => {
@@ -12,13 +13,13 @@ export const useFetchCampaignById = (campaignId: string) => {
 				});
 				if (!res.ok) {
 					// try using when adding error boundary
-					// const error = await res.json();
-					// throw new Error(error as string);
-					return null;
+					const error = await res.json();
+					throw new AppError(error as string);
 				}
 				return res.json();
 			},
 			staleTime: STALE_TIME.FIFTEEN_MINUTES,
+			retry: false,
 		}),
 	);
 };
