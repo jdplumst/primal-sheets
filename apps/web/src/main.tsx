@@ -5,11 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { ErrorBoundary } from "@/components/error-boundary.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
-import { Spinner } from "@/components/ui/spinner.tsx";
 import { CampaignId } from "@/features/campaigns/pages/campaignId.tsx";
 import { Campaigns } from "@/features/campaigns/pages/campaigns.tsx";
 import { ProtectedLayout } from "@/layouts/protected-layout.tsx";
 import App from "./App.tsx";
+import { LoadingLayout } from "./layouts/loading-layout.tsx";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -21,7 +21,7 @@ createRoot(rootElement).render(
 		<QueryClientProvider client={queryClient}>
 			<Toaster />
 			<ErrorBoundary fallback={<div>Uh oh! Something went wrong!</div>}>
-				<Suspense fallback={<Spinner />}>
+				<Suspense fallback={<LoadingLayout />}>
 					<BrowserRouter>
 						<Routes>
 							<Route element={<ProtectedLayout isProtected={false} />}>
