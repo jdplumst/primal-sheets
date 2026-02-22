@@ -4,16 +4,11 @@ import {
 	acceptCampaignInvitationRepository,
 	createCampaignInvitationRepository,
 	fetchCampaignInvitationByIdRepository,
-	fetchCampaignInvitationsRepository,
 } from "@/features/campaigns/repositories/campaign-invitation-repository";
 import { fetchCampaignMemberRepository } from "@/features/campaigns/repositories/campaign-member-repository";
 import { fetchCampaignByIdRepository } from "@/features/campaigns/repositories/campaign-repository";
 import { INVITATION_STATUS } from "@/features/campaigns/utils/constants";
-
-export async function fetchCampaignInvitationsService(userId: string) {
-	const invitations = await fetchCampaignInvitationsRepository(db, userId);
-	return invitations;
-}
+import { errResult, okResult } from "@/utils/result";
 
 export async function createCampaignInvitationService(
 	userId: string,
@@ -27,15 +22,16 @@ export async function createCampaignInvitationService(
 	);
 
 	if (!campaignData || campaignData.campaign.createdBy !== userId) {
-		throw new Error(
-			"You are not authorized to create an invitation for this campaign",
+		return errResult(
+			"The campaign either does not exist or you are not authorized to create an invitation for the campaign",
+			422,
 		);
 	}
 
 	const invitedUserData = await fetchUserById(db, userId);
 
 	if (!invitedUserData) {
-		throw new Error("The user you are trying to invite does not exist");
+		return errResult("The user you are trying to invite does not exist", 404);
 	}
 
 	const campaignMemberData = await fetchCampaignMemberRepository(
@@ -45,8 +41,9 @@ export async function createCampaignInvitationService(
 	);
 
 	if (campaignMemberData) {
-		throw new Error(
+		return errResult(
 			"The user you are trying to invite is already a member of the campaign",
+			409,
 		);
 	}
 
@@ -56,7 +53,7 @@ export async function createCampaignInvitationService(
 		campaignId,
 		invitedUserId,
 	);
-	return campaignInvitationData;
+	return okResult(campaignInvitationData, 200);
 }
 
 export async function acceptCampaignInvitationService(
