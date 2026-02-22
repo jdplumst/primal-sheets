@@ -1,14 +1,14 @@
 import { db } from "@/db";
 import { fetchUserById } from "@/features/auth/repositories/user-repository";
-import {
-	acceptCampaignInvitationRepository,
-	createCampaignInvitationRepository,
-	fetchCampaignInvitationByIdRepository,
-} from "@/features/campaigns/repositories/campaign-invitation-repository";
+import { createCampaignInvitationRepository } from "@/features/campaigns/repositories/campaign-invitation-repository";
 import { fetchCampaignMemberRepository } from "@/features/campaigns/repositories/campaign-member-repository";
 import { fetchCampaignByIdRepository } from "@/features/campaigns/repositories/campaign-repository";
 import { INVITATION_STATUS } from "@/features/campaigns/utils/constants";
 import { errResult, okResult } from "@/utils/result";
+import {
+	acceptInvitationRepository,
+	fetchInvitationByIdRepository,
+} from "../repositories/invitation-repository";
 
 export async function createCampaignInvitationService(
 	userId: string,
@@ -60,7 +60,7 @@ export async function acceptCampaignInvitationService(
 	userId: string,
 	campaignInvitationId: string,
 ) {
-	const campaignInvitationData = await fetchCampaignInvitationByIdRepository(
+	const campaignInvitationData = await fetchInvitationByIdRepository(
 		db,
 		userId,
 		campaignInvitationId,
@@ -77,7 +77,7 @@ export async function acceptCampaignInvitationService(
 		return errResult("This invitation can no longer be accepted", 409);
 	}
 
-	const acceptedInvitation = await acceptCampaignInvitationRepository(
+	const acceptedInvitation = await acceptInvitationRepository(
 		db,
 		campaignInvitationId,
 	);

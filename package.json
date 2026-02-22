@@ -8,7 +8,10 @@
     "format": "turbo run format",
     "check-types": "turbo run check-types",
     "db:generate": "turbo run db:generate --filter=api",
-    "db:migrate": "turbo run db:migrate --filter=api"
+    "db:migrate": "turbo run db:migrate --filter=api",
+    "test:unit": "turbo run test:unit --filter=api",
+    "test:integration": "turbo run test:integration --filter=api",
+    "test": "turbo run test:unit test:integration --filter=api"
   },
   "devDependencies": {
     "@types/react": "^19.2.10",

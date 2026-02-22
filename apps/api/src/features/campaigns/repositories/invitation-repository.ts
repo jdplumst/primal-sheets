@@ -16,3 +16,34 @@ export async function fetchInvitationsRepository(db: Database, userId: string) {
 
 	return invitations;
 }
+
+export async function fetchInvitationByIdRepository(
+	db: Database,
+	userId: string,
+	campaignInvitationId: string,
+) {
+	const invitationData = await db
+		.select()
+		.from(campaignInvitation)
+		.where(
+			and(
+				eq(campaignInvitation.id, campaignInvitationId),
+				eq(campaignInvitation.invitedUserId, userId),
+			),
+		);
+
+	return invitationData[0] ?? null;
+}
+
+export async function acceptInvitationRepository(
+	db: Database,
+	campaignInvitationId: string,
+) {
+	const campaignInvitationData = await db
+		.update(campaignInvitation)
+		.set({ statusId: INVITATION_STATUS.ACCEPTED })
+		.where(eq(campaignInvitation.id, campaignInvitationId))
+		.returning();
+
+	return campaignInvitationData[0] ?? null;
+}

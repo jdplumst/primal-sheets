@@ -22,6 +22,12 @@
     "db:migrate": {
       "cache": false
     },
+    "test:unit": {
+      "cache": false
+    },
+    "test:integration": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true

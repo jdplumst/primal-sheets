@@ -25,6 +25,10 @@ export async function createTestDb() {
 }
 
 async function pushSchema(databaseUrl: string) {
+	const cwd = process.cwd().endsWith("apps/api")
+		? process.cwd()
+		: path.join(process.cwd(), "apps/api");
+
 	execSync(`bunx drizzle-kit push`, {
 		env: {
 			NODE_ENV: "test",
@@ -32,7 +36,7 @@ async function pushSchema(databaseUrl: string) {
 			PATH: process.env.PATH,
 		},
 		stdio: "inherit",
-		cwd: path.join(process.cwd(), "apps/api"), // or wherever your app is
+		cwd: cwd,
 	});
 }
 
