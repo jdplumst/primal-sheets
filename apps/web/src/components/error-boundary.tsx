@@ -7,24 +7,23 @@ class ErrorBoundaryInner extends Component<
 	{
 		children: React.ReactNode;
 		onError: (error: Error) => void;
-		fallback?: React.ReactNode;
+		fallback?: (error: Error) => React.ReactNode;
 	},
-	{ hasError: boolean }
+	{ hasError: boolean; error: Error | null }
 > {
-	state = { hasError: false };
+	state = { hasError: false, error: null };
 
-	static getDerivedStateFromError() {
-		return { hasError: true };
+	static getDerivedStateFromError(error: Error) {
+		return { hasError: true, error };
 	}
 
 	componentDidCatch(error: Error) {
 		setTimeout(() => this.props.onError(error), 0);
-
-		// this.props.onError(error);
 	}
 
 	render() {
-		if (this.state.hasError) return this.props.fallback ?? null;
+		if (this.state.hasError && this.state.error)
+			return this.props.fallback?.(this.state.error) ?? null;
 		return this.props.children;
 	}
 }
@@ -32,14 +31,14 @@ class ErrorBoundaryInner extends Component<
 // Outer functional wrapper so we can use hooks
 export const ErrorBoundary = ({
 	children,
-	fallback,
+	fallback: Fallback,
 }: {
 	children: React.ReactNode;
-	fallback?: React.ReactNode;
+	fallback?: React.ComponentType<{ error: Error }>;
 }) => {
 	return (
 		<ErrorBoundaryInner
-			fallback={fallback}
+			fallback={(error) => (Fallback ? <Fallback error={error} /> : null)}
 			onError={(error) =>
 				toast.error(
 					error instanceof AppError ? error.message : "Something went wrong",

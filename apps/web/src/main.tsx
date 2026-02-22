@@ -9,6 +9,7 @@ import { CampaignId } from "@/features/campaigns/pages/campaignId.tsx";
 import { Campaigns } from "@/features/campaigns/pages/campaigns.tsx";
 import { ProtectedLayout } from "@/layouts/protected-layout.tsx";
 import App from "./App.tsx";
+import { ErrorLayout } from "./layouts/error-layout.tsx";
 import { LoadingLayout } from "./layouts/loading-layout.tsx";
 
 const rootElement = document.getElementById("root");
@@ -20,7 +21,7 @@ createRoot(rootElement).render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
 			<Toaster />
-			<ErrorBoundary fallback={<div>Uh oh! Something went wrong!</div>}>
+			<ErrorBoundary fallback={ErrorLayout}>
 				<Suspense fallback={<LoadingLayout />}>
 					<BrowserRouter>
 						<Routes>
