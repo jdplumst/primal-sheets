@@ -5,6 +5,7 @@ import {
 	fetchCampaignByIdRepository,
 	fetchCampaignsRepository,
 } from "@/features/campaigns/repositories/campaign-repository";
+import { errResult, okResult } from "@/utils/result";
 
 export async function fetchCampaignsService(userId: string) {
 	const campaigns = await fetchCampaignsRepository(db, userId);
@@ -42,10 +43,11 @@ export async function deleteCampaignService(
 	);
 
 	if (!deletedCampaign) {
-		throw new Error(
+		return errResult(
 			"The campaign you are trying delete either doesn't exist or you don't have permission to delete it",
+			404,
 		);
 	}
 
-	return deletedCampaign;
+	return okResult(deletedCampaign, 200);
 }
