@@ -19,7 +19,8 @@
       "cache": false
     },
     "db:migrate": {
-      "cache": false
+      "cache": false,
+      "env": ["DATABASE_URL", "DATABASE_AUTH_TOKEN"]
     },
     "test:unit": {
       "cache": false
