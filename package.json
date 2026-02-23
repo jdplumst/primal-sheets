@@ -6,7 +6,7 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "turbo run format",
-    "check-types": "turbo run check-types",
+    "typecheck": "turbo run typecheck",
     "db:generate": "turbo run db:generate --filter=api",
     "db:migrate": "turbo run db:migrate --filter=api",
     "test:unit": "turbo run test:unit --filter=api",

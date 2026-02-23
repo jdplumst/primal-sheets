@@ -13,8 +13,7 @@
     "format": {
       "cache": false
     },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "typecheck": {
     },
     "db:generate": {
       "cache": false

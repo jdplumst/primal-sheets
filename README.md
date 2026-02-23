@@ -15,7 +15,6 @@ This Turborepo includes the following apps:
 
 Shared packages can be added to the `packages/` directory.
 
-
 ### Utilities
 
 This Turborepo uses:
@@ -92,7 +91,7 @@ bun run format
 To type check all apps and packages:
 
 ```sh
-bun run check-types
+bun run typecheck
 ```
 
 ## Useful Links
