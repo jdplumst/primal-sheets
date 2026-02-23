@@ -1,0 +1,9 @@
+[build]
+target = "bun"
+
+[loader]
+".ts" = "ts"
+
+[alias]
+"@" = "./src"
+"schemas" = "../../packages/schemas/src/index.ts"
