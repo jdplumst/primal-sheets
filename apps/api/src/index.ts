@@ -42,8 +42,13 @@
 // export default app;
 // export type AppType = typeof app;
 
-import type { ExecutionContext } from "hono";
+console.log("1: starting");
+
 import app from "./app";
+
+console.log("2: app imported");
+
+import type { ExecutionContext } from "hono";
 
 const originalFetch = app.fetch.bind(app);
 
