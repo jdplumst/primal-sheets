@@ -13,7 +13,6 @@
 			"**/index.html",
 			"**/vite.config.js",
 			"**/tests/**/*",
-			"!**/src/routeTree.gen.ts",
 			"!**/*.css"
 		]
 	},
