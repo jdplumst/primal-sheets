@@ -1,4 +1,7 @@
 import { Hono } from "hono";
-import app from "./app";
 
-export const fetch = app.fetch;
+const app = new Hono();
+
+app.get("/", (c) => c.text("hello"));
+
+export default app;
