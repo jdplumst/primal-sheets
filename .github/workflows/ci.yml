@@ -58,8 +58,6 @@ jobs:
 
       - name: Unit tests
         run: bun run test:unit
-        env:
-          DATABASE_URL: "file:test.db"
 
       - name: Integration tests
         run: bun run test:integration

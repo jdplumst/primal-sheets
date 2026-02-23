@@ -1,11 +1,5 @@
 import { beforeEach, describe, expect, it, type Mock, mock } from "bun:test";
 import assert from "node:assert";
-import {
-	createCampaignService,
-	deleteCampaignService,
-	fetchCampaignByIdService,
-	fetchCampaignsService,
-} from "@/features/campaigns/services/campaign-service";
 
 mock.module("@/db", () => ({ db: {} }));
 
@@ -19,7 +13,15 @@ mock.module(
 	}),
 );
 
-import * as campaignRepository from "../../../src/features/campaigns/repositories/campaign-repository";
+const campaignRepository = await import(
+	"../../../src/features/campaigns/repositories/campaign-repository"
+);
+const {
+	createCampaignService,
+	deleteCampaignService,
+	fetchCampaignByIdService,
+	fetchCampaignsService,
+} = await import("@/features/campaigns/services/campaign-service");
 
 const mockedCampaignRepository = campaignRepository as unknown as {
 	[K in keyof typeof campaignRepository]: Mock<(typeof campaignRepository)[K]>;
