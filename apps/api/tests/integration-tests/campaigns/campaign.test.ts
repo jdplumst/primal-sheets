@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import assert from "node:assert";
 import { faker } from "@faker-js/faker";
 import { inArray } from "drizzle-orm";
 import {
@@ -341,6 +342,7 @@ describe("campaign repository", () => {
 			);
 
 			expect(result).not.toBeNull();
+			assert(result);
 			expect(result).toMatchObject(TEST_CAMPAIGNS.testCampaign);
 			expect(result.id).toBeDefined();
 			expect(result.createdAt).toBeInstanceOf(Date);
