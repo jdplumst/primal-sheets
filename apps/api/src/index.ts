@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import { auth } from "@/features/auth/lib/auth";
 import type { Context } from "@/types";
@@ -9,6 +10,19 @@ import invitationsRouter from "./features/campaigns/routes/invitation-routes";
 import test from "./features/test";
 
 const app = new Hono<Context>()
+	.use("*", async (c, next) => {
+		// Cloudflare Workers expose bindings on `c.env`. Vercel/Node exposes on `process.env`.
+		// Normalize this so our existing process.env dependencies work properly.
+		if (typeof process === "undefined") {
+			globalThis.process = { env: {} } as any;
+		} else if (!process.env) {
+			process.env = {};
+		}
+		const requestEnv = env(c);
+		Object.assign(process.env, requestEnv);
+		await next();
+	})
+
 	.use(
 		"*",
 		cors({

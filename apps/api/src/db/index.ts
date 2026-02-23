@@ -3,30 +3,32 @@ import { drizzle } from "drizzle-orm/libsql";
 
 import * as schema from "./schema";
 
-/**
- * Cache the database connection in development. This avoids creating a new connection on every HMR
- * update.
- */
-const globalForDb = globalThis as unknown as {
-	client: ReturnType<typeof createHttpClient> | undefined;
-};
+let _db: ReturnType<typeof drizzle> | undefined;
 
-const url = process.env.DATABASE_URL as string;
-const authToken = process.env.DATABASE_AUTH_TOKEN as string;
+function getDb() {
+	if (_db) return _db;
 
-// Use HTTP client for remote URLs (Vercel/production) and standard client for local file URLs
-let createClient: typeof createHttpClient;
+	const url = process.env.DATABASE_URL as string;
+	const authToken = process.env.DATABASE_AUTH_TOKEN as string;
 
-if (url?.startsWith("file:")) {
-	const mod = await import("@libsql/client");
-	createClient = mod.createClient;
-} else {
-	createClient = createHttpClient;
+	// Use HTTP client for remote URLs (Cloudflare/production) and standard client for local file URLs
+	let createClientFn: typeof createHttpClient = createHttpClient;
+
+	if (url?.startsWith("file:")) {
+		createClientFn = require("@libsql/client").createClient;
+	}
+
+	const client = createClientFn({ url, authToken });
+	_db = drizzle(client, { schema });
+	return _db;
 }
 
-const client = globalForDb.client ?? createClient({ url, authToken });
-if (process.env.NODE_ENV !== "production") globalForDb.client = client;
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+	get: (_, prop) => {
+		const target = getDb();
+		const val = (target as any)[prop];
+		return typeof val === "function" ? val.bind(target) : val;
+	},
+});
 
-export const db = drizzle(client, { schema });
-
-export type Database = typeof db;
+export type Database = ReturnType<typeof drizzle>;
