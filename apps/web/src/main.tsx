@@ -9,6 +9,7 @@ import { CampaignId } from "@/features/campaigns/pages/campaignId.tsx";
 import { Campaigns } from "@/features/campaigns/pages/campaigns.tsx";
 import { ProtectedLayout } from "@/layouts/protected-layout.tsx";
 import App from "./App.tsx";
+import { ThemeProvider } from "./components/theme-provider.tsx";
 import { ErrorLayout } from "./layouts/error-layout.tsx";
 import { LoadingLayout } from "./layouts/loading-layout.tsx";
 
@@ -20,24 +21,29 @@ const queryClient = new QueryClient();
 createRoot(rootElement).render(
 	<StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<Toaster />
-			<ErrorBoundary fallback={ErrorLayout}>
-				<Suspense fallback={<LoadingLayout />}>
-					<BrowserRouter>
-						<Routes>
-							<Route element={<ProtectedLayout isProtected={false} />}>
-								<Route path="/" element={<App />} />
-							</Route>
-							<Route element={<ProtectedLayout isProtected />}>
-								<Route path="/campaigns" element={<Campaigns />} />
-							</Route>
-							<Route element={<ProtectedLayout isProtected />}>
-								<Route path="/campaigns/:campaignId" element={<CampaignId />} />
-							</Route>
-						</Routes>
-					</BrowserRouter>
-				</Suspense>
-			</ErrorBoundary>
+			<ThemeProvider defaultTheme="dark" storageKey="primal-sheets-ui-theme">
+				<Toaster />
+				<ErrorBoundary fallback={ErrorLayout}>
+					<Suspense fallback={<LoadingLayout />}>
+						<BrowserRouter>
+							<Routes>
+								<Route element={<ProtectedLayout isProtected={false} />}>
+									<Route path="/" element={<App />} />
+								</Route>
+								<Route element={<ProtectedLayout isProtected />}>
+									<Route path="/campaigns" element={<Campaigns />} />
+								</Route>
+								<Route element={<ProtectedLayout isProtected />}>
+									<Route
+										path="/campaigns/:campaignId"
+										element={<CampaignId />}
+									/>
+								</Route>
+							</Routes>
+						</BrowserRouter>
+					</Suspense>
+				</ErrorBoundary>
+			</ThemeProvider>
 		</QueryClientProvider>
 	</StrictMode>,
 );
