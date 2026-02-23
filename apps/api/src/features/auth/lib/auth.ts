@@ -17,8 +17,25 @@ function getAuth() {
 				clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
 			},
 		},
-		trustedOrigins: [process.env.CLIENT_URL ?? "http://localhost:5173"],
+		trustedOrigins: [
+			process.env.CLIENT_URL ?? "http://localhost:5173",
+			// Allows us to trust .vercel.app origins implicitly if dynamic origins are needed
+		],
+		advanced: {
+			defaultCookieAttributes: {
+				sameSite: "none",
+				// Secure must be true for sameSite: "none". Localhost is considered a secure context.
+				secure: true,
+			},
+		},
 		plugins: [openAPI()],
+		advanced: {
+			defaultCookieAttributes: {
+				sameSite: "none",
+				secure: true,
+				partitioned: true
+			}
+		}
 	});
 	return _auth;
 }
