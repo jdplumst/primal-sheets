@@ -12,7 +12,7 @@
     "format": "biome format --write .",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "dotenv -e .env -- drizzle-kit migrate",
     "test:unit": "bun test tests/unit-tests ",
     "test:integration": "bun test tests/integration-tests"
   },
