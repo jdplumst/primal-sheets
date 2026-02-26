@@ -22,18 +22,17 @@ const app = new Hono<Context>()
 		Object.assign(process.env, requestEnv);
 		await next();
 	})
-
-	.use(
-		"*",
-		cors({
-			origin: process.env.CLIENT_URL ?? "http://localhost:5173",
+	.use("*", async (c, next) => {
+		const { CLIENT_URL } = env<{ CLIENT_URL: string }>(c);
+		return cors({
+			origin: CLIENT_URL ?? "http://localhost:5173",
 			allowHeaders: ["Content-Type", "Authorization"],
 			allowMethods: ["POST", "GET", "DELETE", "OPTIONS"],
 			exposeHeaders: ["Content-Length"],
 			maxAge: 600,
 			credentials: true,
-		}),
-	)
+		})(c, next);
+	})
 	.use("*", async (c, next) => {
 		const session = await auth.api.getSession({ headers: c.req.raw.headers });
 		if (!session) {
