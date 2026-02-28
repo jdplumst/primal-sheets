@@ -17,13 +17,17 @@ export const ProtectedLayout = ({ isProtected }: ProtectedLayoutProps) => {
 		}),
 	);
 
-	useEffect(() => {
-		if (!session.data?.session.userId && isProtected) {
-			navigate("/");
-		} else if (session.data?.session.userId && !isProtected) {
-			navigate("/campaigns");
-		}
-	}, [navigate, session, isProtected]);
+	const userId = session.data?.session.userId;
+
+	if (!userId && isProtected) {
+		navigate("/");
+		return null;
+	}
+
+	if (userId && !isProtected) {
+		navigate("/campaigns");
+		return null;
+	}
 
 	return <Outlet context={{ userId: session.data?.session.userId }} />;
 };
