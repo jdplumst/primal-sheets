@@ -24,6 +24,7 @@ const app = new Hono<Context>()
 	})
 	.use("*", async (c, next) => {
 		const { CLIENT_URL } = env<{ CLIENT_URL: string }>(c);
+		console.log("CLIENT_URL:", CLIENT_URL);
 		return cors({
 			origin: CLIENT_URL ?? "http://localhost:5173",
 			allowHeaders: ["Content-Type", "Authorization"],
