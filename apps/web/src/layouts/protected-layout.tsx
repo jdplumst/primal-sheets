@@ -1,5 +1,4 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { authClient } from "@/lib/auth-client";
 
