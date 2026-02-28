@@ -5,6 +5,7 @@ import { db } from "@/db";
 
 function createAuth() {
 	return betterAuth({
+		baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
 		database: drizzleAdapter(db, {
 			provider: "sqlite",
 		}),
