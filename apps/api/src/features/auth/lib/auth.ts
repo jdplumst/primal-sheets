@@ -3,11 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
 import { db } from "@/db";
 
-let _auth: ReturnType<typeof betterAuth> | undefined;
-
-function getAuth() {
-	if (_auth) return _auth;
-	_auth = betterAuth({
+function createAuth() {
+	return betterAuth({
 		database: drizzleAdapter(db, {
 			provider: "sqlite",
 		}),
@@ -17,10 +14,7 @@ function getAuth() {
 				clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
 			},
 		},
-		trustedOrigins: [
-			process.env.CLIENT_URL ?? "http://localhost:5173",
-			// Allows us to trust .vercel.app origins implicitly if dynamic origins are needed
-		],
+		trustedOrigins: [process.env.CLIENT_URL ?? "http://localhost:5173"],
 		plugins: [openAPI()],
 		advanced: {
 			defaultCookieAttributes: {
@@ -30,12 +24,11 @@ function getAuth() {
 			},
 		},
 	});
-	return _auth;
 }
 
 export const auth = new Proxy({} as ReturnType<typeof betterAuth>, {
 	get: (_, prop) => {
-		const target = getAuth();
+		const target = createAuth();
 		const val = (target as any)[prop];
 		return typeof val === "function" ? val.bind(target) : val;
 	},
