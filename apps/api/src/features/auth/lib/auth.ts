@@ -23,6 +23,9 @@ function createAuth() {
 				secure: true,
 				partitioned: true,
 			},
+			crossSubDomainCookies: {
+				enabled: false,
+			},
 		},
 	});
 }
