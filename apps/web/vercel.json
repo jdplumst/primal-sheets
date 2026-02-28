@@ -8,6 +8,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://primalsheetsapi.jaydeedev.workers.dev/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
