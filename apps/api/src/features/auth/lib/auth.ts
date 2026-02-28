@@ -19,9 +19,8 @@ function createAuth() {
 		plugins: [openAPI()],
 		advanced: {
 			defaultCookieAttributes: {
-				sameSite: "none",
+				sameSite: "lax",
 				secure: true,
-				partitioned: true,
 			},
 			crossSubDomainCookies: {
 				enabled: false,
