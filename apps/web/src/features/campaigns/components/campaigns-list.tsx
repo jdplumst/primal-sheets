@@ -1,5 +1,6 @@
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -63,13 +64,17 @@ export const CampaignsList = () => {
 								{campaigns.map((c) => (
 									<div key={c.campaign.id}>
 										<Item variant="outline">
-											<ItemContent>
-												<ItemTitle>{c.campaign.name}</ItemTitle>
-												<ItemDescription>
-													Last Updated:{" "}
-													{new Date(c.campaign.updatedAt).toLocaleDateString()}
-												</ItemDescription>
-											</ItemContent>
+											<Link to={`/campaigns/${c.campaign.id}`}>
+												<ItemContent>
+													<ItemTitle>{c.campaign.name}</ItemTitle>
+													<ItemDescription>
+														Last Updated:{" "}
+														{new Date(
+															c.campaign.updatedAt,
+														).toLocaleDateString()}
+													</ItemDescription>
+												</ItemContent>
+											</Link>
 											<ItemActions>
 												<Button
 													variant="ghost"

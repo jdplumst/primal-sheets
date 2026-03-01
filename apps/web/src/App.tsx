@@ -30,8 +30,8 @@ function App() {
 						onClick={() =>
 							authClient.signIn.social({
 								provider: "discord",
-								callbackURL: `${import.meta.env.VITE_CLIENT_URL}/campaigns`,
-								errorCallbackURL: "/error",
+								callbackURL: `${import.meta.env.VITE_CLIENT_URL ?? "http://localhost:5173"}/campaigns`,
+								errorCallbackURL: `${import.meta.env.VITE_CLIENT_URL ?? "http://localhost:5173"}/error`,
 							})
 						}
 						size="lg"

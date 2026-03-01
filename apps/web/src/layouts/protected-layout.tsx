@@ -14,7 +14,7 @@ export const ProtectedLayout = ({ isProtected }: ProtectedLayoutProps) => {
 		}),
 	);
 
-	const userId = session.data?.session.userId;
+	const userId = session.data?.session?.userId;
 
 	if (!userId && isProtected) {
 		return <Navigate to="/" replace />;
@@ -24,5 +24,5 @@ export const ProtectedLayout = ({ isProtected }: ProtectedLayoutProps) => {
 		return <Navigate to="/campaigns" replace />;
 	}
 
-	return <Outlet context={{ userId: session.data?.session.userId }} />;
+	return <Outlet context={{ userId: session.data?.session?.userId }} />;
 };
