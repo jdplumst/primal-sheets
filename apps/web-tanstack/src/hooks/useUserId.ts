@@ -1,10 +1,17 @@
-import { useOutletContext } from "react-router";
-
-interface ContextType {
-	userId: string;
-}
+import { useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export function useUserId() {
-	const { userId } = useOutletContext<ContextType>();
-	return userId;
+	const { data: session, isPending } = authClient.useSession();
+	const navigate = useNavigate();
+	const userId = session?.user?.id;
+
+	useEffect(() => {
+		if (!isPending && !userId) {
+			navigate({ to: "/" });
+		}
+	}, [isPending, userId, navigate]);
+
+	return { userId, isPending };
 }

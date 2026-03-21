@@ -1,6 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -64,7 +64,10 @@ export const CampaignsList = () => {
 								{campaigns.map((c) => (
 									<div key={c.campaign.id}>
 										<Item variant="outline">
-											<Link to={`/campaigns/${c.campaign.id}`}>
+											<Link
+												// to={`/campaigns/${c.campaign.id}`}
+												to="/"
+											>
 												<ItemContent>
 													<ItemTitle>{c.campaign.name}</ItemTitle>
 													<ItemDescription>
@@ -93,12 +96,12 @@ export const CampaignsList = () => {
 				)}
 			</Card>
 			<CreateCampaignDialog
-				userId={userId}
+				userId={userId!}
 				open={isCreateDialogOpen}
 				onOpenChange={setIsCreateDialogOpen}
 			/>
 			<DeleteCampaignDialog
-				userId={userId}
+				userId={userId!}
 				campaignId={campaignToDelete}
 				onClose={() => setCampaignToDelete(null)}
 			/>
