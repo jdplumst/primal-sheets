@@ -13,15 +13,18 @@ const config = defineConfig({
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
     tailwindcss(),
     tanstackStart({
-      spa: {
-        enabled: true,
-      },
-      prerender: {
-        enabled: true,
-        autoStaticPathsDiscovery: false,
-        crawlLinks: false,
-      },
-    }),
+  spa: {
+    enabled: true,
+  },
+  prerender: {
+    enabled: true,
+    autoStaticPathsDiscovery: false,
+    crawlLinks: false,
+  },
+  pages: [
+    { path: "/" },
+  ],
+}),
     viteReact(),
   ],
 })

@@ -1,21 +1,19 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { LoadingLayout } from "@/layouts/loading-layout";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/")({
 	component: App,
-	ssr: false,
 	staticData: { prerender: true }, // no loading component since prerendering
+	beforeLoad: async () => {
+		const session = await authClient.getSession();
+		if (session?.data?.user?.id) {
+			throw redirect({ to: "/campaigns" });
+		}
+	},
 });
 
 function App() {
-	const { data: session, isPending } = authClient.useSession();
-	if (isPending) return <LoadingLayout />;
-	if (session) {
-		return <Navigate to="/campaigns" />;
-	}
-
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
 			<div className="absolute inset-0">

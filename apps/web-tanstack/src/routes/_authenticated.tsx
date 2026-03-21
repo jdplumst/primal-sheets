@@ -1,16 +1,26 @@
-import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
-import { LoadingLayout } from "@/layouts/loading-layout";
+import {
+	createFileRoute,
+	Navigate,
+	Outlet,
+	redirect,
+} from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_authenticated")({
+	beforeLoad: async () => {
+		const session = await authClient.getSession();
+		if (!session?.data?.user?.id) {
+			throw redirect({ to: "/" });
+		}
+		return { userId: session.data.user.id };
+	},
 	component: AuthenticatedLayout,
 });
 
 function AuthenticatedLayout() {
-	const { data: session, isPending } = authClient.useSession();
+	const { userId } = Route.useRouteContext();
 
-	if (isPending) return <LoadingLayout />;
-	if (!session?.user?.id) return <Navigate to="/" />;
+	if (!userId) return <Navigate to="/" />;
 
 	return <Outlet />;
 }
