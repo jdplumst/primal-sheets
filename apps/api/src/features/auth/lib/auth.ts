@@ -3,6 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { openAPI } from "better-auth/plugins";
 import { db } from "@/db";
 
+let _auth: ReturnType<typeof createAuth> | null = null;
+
 function createAuth() {
 	return betterAuth({
 		baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
@@ -29,9 +31,16 @@ function createAuth() {
 	});
 }
 
+function getAuth() {
+	if (!_auth) {
+		_auth = createAuth();
+		return _auth;
+	}
+}
+
 export const auth = new Proxy({} as ReturnType<typeof betterAuth>, {
 	get: (_, prop) => {
-		const target = createAuth();
+		const target = getAuth();
 		const val = (target as any)[prop];
 		return typeof val === "function" ? val.bind(target) : val;
 	},
