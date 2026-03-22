@@ -10,13 +10,13 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	const [mounted, setMounted] = useState(false);
-	const { data: session } = authClient.useSession();
+	const { data: session, isPending } = authClient.useSession();
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
-	if (mounted && session) return <Navigate to="/campaigns" />;
+	if (mounted && !isPending && session) return <Navigate to="/campaigns" />;
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
