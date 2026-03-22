@@ -6,3 +6,8 @@
 
   [redirects.headers]
     X-Forwarded-Host = "https://primalsheets.netlify.app/"
+
+[[redirects]]
+  from = "/*"
+  to = "/_shell.html"
+  status = 200
