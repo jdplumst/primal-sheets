@@ -4,6 +4,9 @@ import {
 	Outlet,
 	redirect,
 } from "@tanstack/react-router";
+import { Suspense } from "react";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { LoadingLayout } from "@/layouts/loading-layout";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -22,5 +25,11 @@ function AuthenticatedLayout() {
 
 	if (!userId) return <Navigate to="/" />;
 
-	return <Outlet />;
+	return (
+		<ErrorBoundary>
+			<Suspense fallback={<LoadingLayout />}>
+				<Outlet />
+			</Suspense>
+		</ErrorBoundary>
+	);
 }

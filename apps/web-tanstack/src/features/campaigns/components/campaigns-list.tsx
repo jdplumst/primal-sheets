@@ -65,8 +65,8 @@ export const CampaignsList = () => {
 									<div key={c.campaign.id}>
 										<Item variant="outline">
 											<Link
-												// to={`/campaigns/${c.campaign.id}`}
-												to="/"
+												to={`/campaigns/$campaignId`}
+												params={{ campaignId: c.campaign.id }}
 											>
 												<ItemContent>
 													<ItemTitle>{c.campaign.name}</ItemTitle>

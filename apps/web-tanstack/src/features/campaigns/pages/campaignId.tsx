@@ -1,8 +1,8 @@
-import { useParams } from "react-router";
 import { useFetchCampaignById } from "@/features/campaigns/hooks/useFetchCampaignById";
+import { Route } from "@/routes/_authenticated/campaigns.$campaignId";
 
 export const CampaignId = () => {
-	const { campaignId } = useParams();
+	const { campaignId } = Route.useParams();
 	const { data: campaign } = useFetchCampaignById(campaignId ?? "");
 
 	if (!campaign) {
