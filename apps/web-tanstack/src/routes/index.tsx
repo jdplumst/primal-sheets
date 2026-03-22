@@ -1,4 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
@@ -8,7 +9,16 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	const { data: session, isPending } = authClient.useSession();
+	const { data: session, isPending, error, refetch } = authClient.useSession();
+
+	const retryCount = useRef(0);
+
+	useEffect(() => {
+		if (error && retryCount.current < 3) {
+			retryCount.current += 1;
+			refetch();
+		}
+	}, [error, refetch]);
 
 	if (!isPending && session) return <Navigate to="/campaigns" />;
 
