@@ -1,17 +1,17 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
 import { CampaignsList } from "../components/campaigns-list";
 
 export const Campaigns = () => {
-	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
 	const handleSignOut = async () => {
 		await authClient.signOut({
 			fetchOptions: {
 				onSuccess: () => {
-					queryClient.invalidateQueries({ queryKey: ["auth"] });
+					navigate({ to: "/" });
 				},
 			},
 		});
