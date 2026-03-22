@@ -1,5 +1,4 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
@@ -9,14 +8,9 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	const [mounted, setMounted] = useState(false);
 	const { data: session, isPending } = authClient.useSession();
 
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (mounted && !isPending && session) return <Navigate to="/campaigns" />;
+	if (!isPending && session) return <Navigate to="/campaigns" />;
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
