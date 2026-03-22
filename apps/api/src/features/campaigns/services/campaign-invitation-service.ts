@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import type { Database } from "@/db";
 import { fetchUserById } from "@/features/auth/repositories/user-repository";
 import { createCampaignInvitationRepository } from "@/features/campaigns/repositories/campaign-invitation-repository";
 import { fetchCampaignMemberRepository } from "@/features/campaigns/repositories/campaign-member-repository";
@@ -11,6 +11,7 @@ import {
 } from "../repositories/invitation-repository";
 
 export async function createCampaignInvitationService(
+	db: Database,
 	userId: string,
 	campaignId: string,
 	invitedUserId: string,
@@ -57,6 +58,7 @@ export async function createCampaignInvitationService(
 }
 
 export async function acceptCampaignInvitationService(
+	db: Database,
 	userId: string,
 	campaignInvitationId: string,
 ) {

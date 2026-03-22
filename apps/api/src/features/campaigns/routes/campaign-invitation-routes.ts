@@ -13,9 +13,11 @@ const app = new Hono<AuthenticatedContext>().post(
 	zValidator("json", createCampaignInvitationBody),
 	async (c) => {
 		const userId = c.get("userId");
+		const db = c.get("db");
 		const { campaignId } = c.req.valid("param");
 		const { invitedUserId } = c.req.valid("json");
 		const res = await createCampaignInvitationService(
+			db,
 			userId,
 			campaignId,
 			invitedUserId,

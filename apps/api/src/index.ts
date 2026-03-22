@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { env } from "hono/adapter";
 import { cors } from "hono/cors";
-import { auth } from "@/features/auth/lib/auth";
+import { createDb } from "@/db";
+import { createAuth } from "@/features/auth/lib/auth";
 import type { Context } from "@/types";
 import authRouter, { requireAuth } from "./features/auth";
 import campaignInvitationsRouter from "./features/campaigns/routes/campaign-invitation-routes";
@@ -10,18 +11,6 @@ import invitationsRouter from "./features/campaigns/routes/invitation-routes";
 import test from "./features/test";
 
 const app = new Hono<Context>()
-	.use("*", async (c, next) => {
-		// Cloudflare Workers expose bindings on `c.env`. Vercel/Node exposes on `process.env`.
-		// Normalize this so our existing process.env dependencies work properly.
-		if (typeof process === "undefined") {
-			globalThis.process = { env: {} } as any;
-		} else if (!process.env) {
-			process.env = {};
-		}
-		const requestEnv = env(c);
-		Object.assign(process.env, requestEnv);
-		await next();
-	})
 	.use("*", async (c, next) => {
 		const { CLIENT_URL } = env<{ CLIENT_URL: string }>(c);
 		return cors({
@@ -34,6 +23,7 @@ const app = new Hono<Context>()
 		})(c, next);
 	})
 	.use("*", async (c, next) => {
+		const auth = createAuth(c.env);
 		const session = await auth.api.getSession({ headers: c.req.raw.headers });
 		if (!session) {
 			c.set("userId", null);
@@ -43,6 +33,10 @@ const app = new Hono<Context>()
 		}
 		c.set("userId", session.user.id);
 		c.set("session", session.session);
+		await next();
+	})
+	.use("*", async (c, next) => {
+		c.set("db", createDb(c.env));
 		await next();
 	})
 	.use("*", requireAuth)

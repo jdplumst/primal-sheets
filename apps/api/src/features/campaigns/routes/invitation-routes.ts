@@ -8,7 +8,8 @@ import { acceptCampaignInvitationService } from "../services/campaign-invitation
 const app = new Hono<AuthenticatedContext>()
 	.get("/", async (c) => {
 		const userId = c.get("userId");
-		const res = await fetchInvitationsService(userId);
+		const db = c.get("db");
+		const res = await fetchInvitationsService(db, userId);
 		return c.json(res.data, res.code);
 	})
 	.patch(
@@ -16,8 +17,13 @@ const app = new Hono<AuthenticatedContext>()
 		zValidator("param", patchCampaignInvitationParam),
 		async (c) => {
 			const userId = c.get("userId");
+			const db = c.get("db");
 			const { invitationId } = c.req.valid("param");
-			const res = await acceptCampaignInvitationService(userId, invitationId);
+			const res = await acceptCampaignInvitationService(
+				db,
+				userId,
+				invitationId,
+			);
 			if (!res.ok) {
 				return c.json(res.error, res.code);
 			}

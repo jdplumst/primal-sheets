@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import type { Database } from "@/db";
 import {
 	createCampaignRepository,
 	deleteCampaignRepository,
@@ -7,12 +7,13 @@ import {
 } from "@/features/campaigns/repositories/campaign-repository";
 import { errResult, okResult } from "@/utils/result";
 
-export async function fetchCampaignsService(userId: string) {
+export async function fetchCampaignsService(db: Database, userId: string) {
 	const campaigns = await fetchCampaignsRepository(db, userId);
 	return okResult(campaigns, 200);
 }
 
 export async function fetchCampaignByIdService(
+	db: Database,
 	userId: string,
 	campaignId: string,
 ) {
@@ -27,6 +28,7 @@ export async function fetchCampaignByIdService(
 }
 
 export async function createCampaignService(
+	db: Database,
 	userId: string,
 	campaignName: string,
 ) {
@@ -39,6 +41,7 @@ export async function createCampaignService(
 }
 
 export async function deleteCampaignService(
+	db: Database,
 	userId: string,
 	campaignId: string,
 ) {

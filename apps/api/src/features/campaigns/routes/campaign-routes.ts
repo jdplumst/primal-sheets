@@ -16,13 +16,15 @@ import type { AuthenticatedContext } from "@/types";
 const app = new Hono<AuthenticatedContext>()
 	.get("/", async (c) => {
 		const userId = c.get("userId");
-		const res = await fetchCampaignsService(userId);
+		const db = c.get("db");
+		const res = await fetchCampaignsService(db, userId);
 		return c.json(res.data, res.code);
 	})
 	.get("/:id", zValidator("param", fetchCampaignByIdParam), async (c) => {
 		const userId = c.get("userId");
+		const db = c.get("db");
 		const { id } = c.req.valid("param");
-		const res = await fetchCampaignByIdService(userId, id);
+		const res = await fetchCampaignByIdService(db, userId, id);
 		if (!res.ok) {
 			return c.json(res.error, res.code);
 		}
@@ -40,15 +42,17 @@ const app = new Hono<AuthenticatedContext>()
 		}),
 		async (c) => {
 			const userId = c.get("userId");
+			const db = c.get("db");
 			const body = c.req.valid("json");
-			const res = await createCampaignService(userId, body.campaignName);
+			const res = await createCampaignService(db, userId, body.campaignName);
 			return c.json(res.data, res.code);
 		},
 	)
 	.delete("/:id", zValidator("param", deleteCampaignParam), async (c) => {
 		const userId = c.get("userId");
+		const db = c.get("db");
 		const param = c.req.valid("param");
-		const res = await deleteCampaignService(userId, param.id);
+		const res = await deleteCampaignService(db, userId, param.id);
 		if (!res.ok) {
 			return c.json(res.error, res.code);
 		}
