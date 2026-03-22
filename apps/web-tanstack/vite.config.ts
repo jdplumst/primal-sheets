@@ -13,8 +13,10 @@ const config = defineConfig({
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
     tailwindcss(),
     tanstackStart({
+      srcDirectory: "src",
   spa: {
     enabled: true,
+    maskPath: "/campaigns",
     prerender: {
       outputPath: "/_shell",
       crawlLinks: false,
