@@ -11,9 +11,7 @@ import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/_authenticated")({
 	beforeLoad: async () => {
-		console.log("beforeLoad running");
 		const session = await authClient.getSession();
-		console.log("session:", session);
 		if (!session?.data?.user?.id) {
 			throw redirect({ to: "/" });
 		}
