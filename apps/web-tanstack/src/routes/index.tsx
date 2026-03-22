@@ -1,19 +1,23 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/")({
 	component: App,
 	staticData: { prerender: true }, // no loading component since prerendering
-	beforeLoad: async () => {
-		const session = await authClient.getSession();
-		if (session?.data?.user?.id) {
-			throw redirect({ to: "/campaigns" });
-		}
-	},
 });
 
 function App() {
+	const [mounted, setMounted] = useState(false);
+	const { data: session } = authClient.useSession();
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (mounted && session) return <Navigate to="/campaigns" />;
+
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
 			<div className="absolute inset-0">
