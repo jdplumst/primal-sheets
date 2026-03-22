@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/api/*"
+  to = "https://primalsheetsapi.jaydeedev.workers.dev/api/:path*"
+  status = 200
+  force = true
