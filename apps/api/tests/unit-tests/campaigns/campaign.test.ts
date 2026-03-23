@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, type Mock, mock } from "bun:test";
 import assert from "node:assert";
+import type { Database } from "@/db";
 
-mock.module("@/db", () => ({ db: {} }));
+const db = {} as Database;
 
 mock.module(
 	"../../../src/features/campaigns/repositories/campaign-repository",
@@ -69,7 +70,7 @@ describe("campaign service", () => {
 				},
 			]);
 
-			const result = await fetchCampaignsService("user-1");
+			const result = await fetchCampaignsService(db, "user-1");
 			expect(result.ok).toBe(true);
 			expect(result.data).toHaveLength(2);
 		});
@@ -92,7 +93,7 @@ describe("campaign service", () => {
 				mockedCampaign,
 			);
 
-			const result = await fetchCampaignByIdService("user-1", "campaign-1");
+			const result = await fetchCampaignByIdService(db, "user-1", "campaign-1");
 			expect(result.ok).toBe(true);
 			assert(result.ok);
 			expect(result.data).toStrictEqual(mockedCampaign);
@@ -109,7 +110,7 @@ describe("campaign service", () => {
 				createdBy: "user-1",
 			});
 
-			const result = await createCampaignService("user-1", "campaign-name");
+			const result = await createCampaignService(db, "user-1", "campaign-name");
 			expect(result.data).toStrictEqual({
 				id: "campaign-1",
 				name: "campaign-name",
@@ -130,7 +131,7 @@ describe("campaign service", () => {
 				createdBy: "user-1",
 			});
 
-			const result = await deleteCampaignService("user-1", "campaign-1");
+			const result = await deleteCampaignService(db, "user-1", "campaign-1");
 			assert(result.ok);
 			expect(result.data).toStrictEqual({
 				id: "campaign-1",
@@ -144,7 +145,7 @@ describe("campaign service", () => {
 		it("throws error if campaign with campaign does not exist or don't have permission to delete", async () => {
 			mockedCampaignRepository.deleteCampaignRepository.mockResolvedValue(null);
 
-			const result = await deleteCampaignService("user-1", "campaign-1");
+			const result = await deleteCampaignService(db, "user-1", "campaign-1");
 			assert(!result.ok);
 			await expect(result.error).toBe(
 				"The campaign you are trying delete either doesn't exist or you don't have permission to delete it",

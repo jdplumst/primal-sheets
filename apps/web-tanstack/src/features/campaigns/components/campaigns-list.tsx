@@ -31,7 +31,7 @@ export const CampaignsList = () => {
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 	const [campaignToDelete, setCampaignToDelete] = useState<string | null>(null);
 	const { userId } = Route.useRouteContext();
-	const { data: campaigns } = useFetchCampaigns(userId);
+	const { data: campaigns } = useFetchCampaigns();
 
 	return (
 		<>

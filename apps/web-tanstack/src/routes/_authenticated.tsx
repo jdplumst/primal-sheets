@@ -13,7 +13,7 @@ import { authQueryOptions } from "@/lib/auth-queries";
 export const Route = createFileRoute("/_authenticated")({
 	beforeLoad: async () => {
 		const { queryClient } = getContext();
-		const session = await queryClient.fetchQuery(authQueryOptions);
+		const session = await queryClient.ensureQueryData(authQueryOptions);
 
 		if (!session?.data?.user?.id) {
 			throw redirect({ to: "/", replace: true });
@@ -21,6 +21,7 @@ export const Route = createFileRoute("/_authenticated")({
 		return { userId: session.data.user.id };
 	},
 	component: AuthenticatedLayout,
+	pendingComponent: LoadingLayout,
 });
 
 function AuthenticatedLayout() {
