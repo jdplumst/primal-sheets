@@ -5,6 +5,7 @@ export const STALE_TIME = {
 } as const;
 
 export const QUERY_KEY = {
+	AUTH: ["auth"],
 	CAMPAIGNS: {
 		CAMPAIGNS: ["campaigns"],
 		CAMPAIGN_ID: (campaignId: string) => ["campaigns", campaignId],
