@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
@@ -11,7 +11,10 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	const navigate = useNavigate();
-	const { data: session } = useSuspenseQuery(authQueryOptions);
+	const { data: session } = useQuery({
+		...authQueryOptions,
+		enabled: typeof window !== "undefined",
+	});
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
@@ -39,7 +42,7 @@ function App() {
 				<div className="space-y-4">
 					<Button
 						onClick={() =>
-							session.data?.user.id
+							session?.data?.user.id
 								? navigate({ to: "/campaigns" })
 								: authClient.signIn.social({
 										provider: "discord",
@@ -50,7 +53,7 @@ function App() {
 						size="lg"
 						className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
 					>
-						{session.data?.user.id ? (
+						{session?.data?.user.id ? (
 							"Open App"
 						) : (
 							<>
