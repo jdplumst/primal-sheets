@@ -1,14 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { QUERY_KEY } from "@/lib/constants";
 import { hono } from "@/rpc";
 
 interface UseCreateCampaignOptions {
-	userId: string;
 	closeDialog: () => void;
 }
 
 export const useCreateCampaign = ({
-	userId,
 	closeDialog,
 }: UseCreateCampaignOptions) => {
 	const queryClient = useQueryClient();
@@ -24,7 +23,9 @@ export const useCreateCampaign = ({
 			return await res.json();
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["campaigns", userId] });
+			queryClient.invalidateQueries({
+				queryKey: QUERY_KEY.CAMPAIGNS.CAMPAIGNS,
+			});
 			closeDialog();
 		},
 		onError: (error) => {

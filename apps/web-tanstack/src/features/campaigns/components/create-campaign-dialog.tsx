@@ -20,13 +20,11 @@ import { useCreateCampaign } from "@/features/campaigns/hooks/useCreateCampaign"
 type FormData = z.infer<typeof createCampaignBody>;
 
 interface CreateCampaignDialogProps {
-	userId: string;
 	open: boolean;
 	onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const CreateCampaignDialog = ({
-	userId,
 	open,
 	onOpenChange,
 }: CreateCampaignDialogProps) => {
@@ -44,7 +42,6 @@ export const CreateCampaignDialog = ({
 	});
 
 	const { mutate: createCampaign, isPending } = useCreateCampaign({
-		userId,
 		closeDialog: () => handleOpenChange(false),
 	});
 

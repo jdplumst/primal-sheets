@@ -1,12 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { QUERY_KEY } from "@/lib/constants";
 import { hono } from "@/rpc";
 
-interface UseDeleteCampaignOptions {
-	userId: string;
-}
-
-export const useDeleteCampaign = ({ userId }: UseDeleteCampaignOptions) => {
+export const useDeleteCampaign = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -20,7 +17,9 @@ export const useDeleteCampaign = ({ userId }: UseDeleteCampaignOptions) => {
 			}
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["campaigns", userId] });
+			queryClient.invalidateQueries({
+				queryKey: QUERY_KEY.CAMPAIGNS.CAMPAIGNS,
+			});
 		},
 		onError: (error) => {
 			const errorMessage =

@@ -25,12 +25,10 @@ import {
 import { CreateCampaignDialog } from "@/features/campaigns/components/create-campaign-dialog";
 import { DeleteCampaignDialog } from "@/features/campaigns/components/delete-campaign-dialog";
 import { useFetchCampaigns } from "@/features/campaigns/hooks/useFetchCampaigns";
-import { Route } from "@/routes/_authenticated";
 
 export const CampaignsList = () => {
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 	const [campaignToDelete, setCampaignToDelete] = useState<string | null>(null);
-	const { userId } = Route.useRouteContext();
 	const { data: campaigns } = useFetchCampaigns();
 
 	return (
@@ -96,12 +94,10 @@ export const CampaignsList = () => {
 				)}
 			</Card>
 			<CreateCampaignDialog
-				userId={userId}
 				open={isCreateDialogOpen}
 				onOpenChange={setIsCreateDialogOpen}
 			/>
 			<DeleteCampaignDialog
-				userId={userId}
 				campaignId={campaignToDelete}
 				onClose={() => setCampaignToDelete(null)}
 			/>

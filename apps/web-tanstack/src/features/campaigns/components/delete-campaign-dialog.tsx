@@ -10,17 +10,15 @@ import {
 import { useDeleteCampaign } from "@/features/campaigns/hooks/useDeleteCampaign";
 
 interface DeleteCampaignDialogProps {
-	userId: string;
 	campaignId: string | null;
 	onClose: () => void;
 }
 
 export const DeleteCampaignDialog = ({
-	userId,
 	campaignId,
 	onClose,
 }: DeleteCampaignDialogProps) => {
-	const deleteCampaign = useDeleteCampaign({ userId });
+	const deleteCampaign = useDeleteCampaign();
 
 	return (
 		<Dialog open={!!campaignId} onOpenChange={(open) => !open && onClose}>
